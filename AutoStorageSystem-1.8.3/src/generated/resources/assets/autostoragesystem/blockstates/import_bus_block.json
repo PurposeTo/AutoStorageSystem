@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "autostoragesystem:block/import_bus_block"
+    }
+  }
+}

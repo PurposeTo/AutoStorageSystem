@@ -25,6 +25,8 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         blockItem(ModBlocks.CITRINE_BLOCK.get());
 
+        blockItem(ModBlocks.IMPORT_BUS_BLOCK.get());
+
         simpleItem(ModItems.CITRINE.get());
         simpleItem(ModItems.RAW_CITRINE.get());
 

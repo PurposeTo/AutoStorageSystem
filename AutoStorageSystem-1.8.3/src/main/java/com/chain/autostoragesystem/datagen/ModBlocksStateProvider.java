@@ -22,6 +22,8 @@ public class ModBlocksStateProvider extends BlockStateProvider {
     protected void registerStatesAndModels() {
 
         simpleBlock(ModBlocks.CITRINE_BLOCK.get());
+
+        simpleBlock(ModBlocks.IMPORT_BUS_BLOCK.get());
     }
 
     public ModelFile flowerPotCross(String name) {
