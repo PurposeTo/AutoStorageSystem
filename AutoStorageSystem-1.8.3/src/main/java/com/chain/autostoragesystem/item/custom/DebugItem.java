@@ -44,7 +44,10 @@ public class DebugItem extends Item {
                             LazyOptional<IImportBus> importBusLazyOptional = blockEntity.getCapability(ModCapabilities.IMPORT_BUS_CAPABILITY);
 
                             systemControllerOp.ifPresent(systemController -> {
-                                systemController.addImportBus(player, importBusLazyOptional);
+
+                                if (importBusLazyOptional.isPresent()) {
+                                    systemController.addImportBus(player, importBusLazyOptional);
+                                }
                             });
                         });
             }

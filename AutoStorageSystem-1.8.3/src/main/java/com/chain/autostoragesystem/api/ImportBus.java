@@ -1,23 +1,20 @@
 package com.chain.autostoragesystem.api;
 
-import lombok.Setter;
-import net.minecraft.network.chat.HoverEvent;
+import com.chain.autostoragesystem.utils.common.CollectionUtils;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ImportBus implements IImportBus {
 
-    private Set<IItemHandler> connectedInventories = new HashSet<>();
 
-    @Override
-    public Set<IItemHandler> getConnectedInventories() {
-        return this.connectedInventories;
-    }
+    // LinkedHashSet чтобы не хранить дубликаты и иметь очередность
+    // Список хранит строго существующие IItemHandler-ы
+    private LinkedHashSet<IItemHandler> connectedInventories = new LinkedHashSet<>();
 
     @Override
     public Set<ImportRequest> getImportRequests() {
@@ -26,13 +23,15 @@ public class ImportBus implements IImportBus {
                 .collect(Collectors.toSet());
     }
 
-    public void setConnectedInventories(@Nonnull Set<IItemHandler> inventories) {
-        this.connectedInventories = inventories;
+    public void setConnectedInventories(@Nonnull LinkedHashSet<IItemHandler> inventories) {
+        if (!CollectionUtils.equalObjectsReferences(this.connectedInventories, inventories)) {
+            this.connectedInventories = inventories;
+        }
     }
 
     //todo учитывать фильтры
-    private Set<ImportRequest> getImportRequest(IItemHandler inventory) {
-        Set<ImportRequest> requests = new HashSet<>();
+    private LinkedHashSet<ImportRequest> getImportRequest(IItemHandler inventory) {
+        LinkedHashSet<ImportRequest> requests = new LinkedHashSet<>();
 
         int slots = inventory.getSlots();
         for (int slot = 0; slot < slots; slot++) {

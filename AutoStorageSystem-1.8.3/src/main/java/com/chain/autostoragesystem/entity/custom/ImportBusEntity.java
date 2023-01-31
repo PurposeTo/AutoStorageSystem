@@ -17,15 +17,15 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 
 public class ImportBusEntity extends BlockEntity {
 
     private final ImportBus importBus = new ImportBus();
 
-    List<IItemHandler> connectedInventories = new ArrayList<>();
+    // LinkedHashSet чтобы не хранить дубликаты и иметь очередность
+    // Список хранит строго существующие IItemHandler-ы
+    LinkedHashSet<IItemHandler> connectedInventories = new LinkedHashSet<>();
 
     LazyOptional<IImportBus> importBusLazyOptional = LazyOptional.of(() -> importBus);
 
@@ -60,7 +60,7 @@ public class ImportBusEntity extends BlockEntity {
     }
 
     private void updateInventoryBusState() {
-        importBus.setConnectedInventories(new HashSet<>(this.connectedInventories));
+        importBus.setConnectedInventories(this.connectedInventories);
     }
 
 

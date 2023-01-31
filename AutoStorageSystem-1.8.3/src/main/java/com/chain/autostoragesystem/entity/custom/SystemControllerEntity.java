@@ -17,10 +17,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -46,7 +44,7 @@ import java.util.stream.Collectors;
 public class SystemControllerEntity extends BlockEntity {
 
 
-    private ProgressManager progressManager;
+    private final ProgressManager progressManager;
     int operationCapacity = 1;
     private int totalOperationSpeed;
 
@@ -54,7 +52,10 @@ public class SystemControllerEntity extends BlockEntity {
 
     public Player player; // дебаг поле - вместо шины экспорта
 
-    Set<LazyOptional<IImportBus>> importBusesOps = new HashSet<>(); // can only import from these storages. Items don't visible in SystemMaster menu.
+    // LinkedHashSet чтобы не хранить дубликаты и иметь очередность
+    // lazy, чтобы сам SystemControllerEntity мог удалить из списка тот, который был разрушен
+    LinkedHashSet<LazyOptional<IImportBus>> importBusesOps = new LinkedHashSet<>(); // can only import from these storages. Items don't visible in SystemMaster menu.
+
     List<Object> exportStorages; // can only export to these storages. Items don't visible in SystemMaster menu.
 
 
@@ -90,6 +91,10 @@ public class SystemControllerEntity extends BlockEntity {
     }
 
     public void addImportBus(Player player, LazyOptional<IImportBus> importBus) {
+        if (!importBus.isPresent()) {
+            return;
+        }
+
         boolean isNew = importBusesOps.add(importBus);
 
         //log to chat
@@ -113,21 +118,19 @@ public class SystemControllerEntity extends BlockEntity {
 
     //4. положить забранные предметы в инвентарь из шага 1.
     private void doImport() {
-        Optional<ItemStack> itemStackOp = this.getImportRequests()
+        this.getImportRequests()
                 .stream()
-                .map(ImportRequest::execute)
-                .findFirst();
-
-        itemStackOp
-                .ifPresent(itemStack -> {
+                .findFirst()
+                .ifPresent(importRequest -> {
+                    ItemStack itemStack = importRequest.execute();
                     this.player.getInventory().add(itemStack);
                 });
     }
 
-    private Set<ImportRequest> getImportRequests() {
+    private LinkedHashSet<ImportRequest> getImportRequests() {
         return importBusesOps.stream()
                 .flatMap(it -> it.resolve().stream())
                 .flatMap(importBus -> importBus.getImportRequests().stream())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }
