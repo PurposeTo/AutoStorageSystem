@@ -1,0 +1,8 @@
+{
+  "block.autostoragesystem.citrine_block": "Citrine block",
+  "block.autostoragesystem.import_bus_block": "Import bus",
+  "block.autostoragesystem.system_controller_block": "System controller",
+  "item.autostoragesystem.citrine": "Citrine",
+  "item.autostoragesystem.debug_item.no_valuables": "No blocks found!",
+  "item.autostoragesystem.raw_citrine": "Raw citrine"
+}
