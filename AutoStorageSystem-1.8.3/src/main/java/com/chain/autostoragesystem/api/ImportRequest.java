@@ -21,9 +21,9 @@ public class ImportRequest {
 
     @Override
     public String toString() {
-        return "ImportRequest {" +
-                "requestStack=" + requestStack + ",\n" +
-                "requestSlot=" + requestSlot +
-                "\n}";
+        return String.format("""
+                ImportRequest:
+                requestStack = %s,
+                requestSlot = %s""", requestStack, requestSlot);
     }
 }

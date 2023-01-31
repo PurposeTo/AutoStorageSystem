@@ -4,7 +4,7 @@ import com.chain.autostoragesystem.ModMain;
 import com.chain.autostoragesystem.block.ModBlocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -24,6 +24,7 @@ public class ModBlocksStateProvider extends BlockStateProvider {
         simpleBlock(ModBlocks.CITRINE_BLOCK.get());
 
         simpleBlock(ModBlocks.IMPORT_BUS_BLOCK.get());
+        simpleBlock(ModBlocks.SYSTEM_CONTROLLER_BLOCK.get());
     }
 
     public ModelFile flowerPotCross(String name) {

@@ -1,5 +1,6 @@
 package com.chain.autostoragesystem.api;
 
+import com.chain.autostoragesystem.utils.minecraft.Levels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,9 +24,7 @@ public class NeighborsApi {
     public static List<IItemHandler> getItemHandlers(Level level, BlockPos sourcePos) {
         //The client doesn't know what is in a chest unless that chest is opened.
         //need to invoke on server
-        if (level.isClientSide) {
-            throw new IllegalStateException("The client doesn't know what is in a chest unless that chest is opened. Must have to invoke this only on server side.");
-        }
+        Levels.requireServerSide(level);
 
         return get(level, sourcePos, CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
     }

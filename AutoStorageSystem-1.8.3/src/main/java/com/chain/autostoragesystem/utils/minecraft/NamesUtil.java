@@ -6,9 +6,8 @@ import net.minecraft.world.level.block.Block;
 
 public class NamesUtil {
 
-
     public static String getBlockName(Block block) {
-        return new TranslatableComponent(block.getName().getString()).toString();
+        return new TranslatableComponent(block.getName().getString()).getKey();
     }
 
     public static String getBlockNameAndCoordinatesLog(BlockPos blockPos, Block block) {

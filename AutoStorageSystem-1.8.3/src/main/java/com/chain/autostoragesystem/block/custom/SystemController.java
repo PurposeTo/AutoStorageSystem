@@ -4,7 +4,6 @@ import com.chain.autostoragesystem.api.IImportBus;
 import com.chain.autostoragesystem.utils.ChatUtil;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.items.ItemHandlerHelper;
 
 import java.util.HashSet;
 import java.util.List;
@@ -61,12 +60,13 @@ public class SystemController extends Block {
     }
 
     public void addImportBus(Player player, IImportBus importBus) {
-        importBuses.add(importBus);
-        System.out.println("Add!");
+        boolean isNew = importBuses.add(importBus);
+
+        //log to chat
         StringBuilder b = new StringBuilder();
-        importBus.getImportRequests().forEach(b::append);
+        String addLog = isNew ? "Add!\n" : "Already added!\n";
+        b.append(addLog);
+        importBus.getImportRequests().forEach(obj -> b.append(obj).append("\n"));
         ChatUtil.playerSendMessage(player, b.toString());
     }
-
-
 }
