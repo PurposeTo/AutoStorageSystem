@@ -5,7 +5,6 @@ import com.chain.autostoragesystem.api.IImportBus;
 import com.chain.autostoragesystem.api.ImportBus;
 import com.chain.autostoragesystem.api.NeighborsApi;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
-import com.chain.autostoragesystem.utils.common.Random;
 import com.chain.autostoragesystem.utils.minecraft.Levels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,8 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 
 public class ImportBusEntity extends BlockEntity {
-
-    private final int id = Random.range(0, 1000000);
 
     private final ImportBus importBus = new ImportBus();
 
@@ -53,7 +50,6 @@ public class ImportBusEntity extends BlockEntity {
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, ImportBusEntity blockEntity) {
-
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, ImportBusEntity blockEntity) {

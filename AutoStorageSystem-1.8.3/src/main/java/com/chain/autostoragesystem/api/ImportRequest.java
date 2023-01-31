@@ -1,10 +1,13 @@
 package com.chain.autostoragesystem.api;
 
+import lombok.Getter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 
+
+@Getter
 public class ImportRequest {
 
     private final IItemHandler inventory; // откуда изъять
@@ -17,6 +20,12 @@ public class ImportRequest {
         this.inventory = inventory;
         this.requestStack = requestStack;
         this.requestSlot = requestSlot;
+    }
+
+    public ItemStack execute() {
+
+        //todo change amount
+        return inventory.extractItem(requestSlot, 1, false);
     }
 
     @Override

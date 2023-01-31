@@ -1,7 +1,8 @@
 package com.chain.autostoragesystem.item.custom;
 
 import com.chain.autostoragesystem.ModCapabilities;
-import com.chain.autostoragesystem.block.custom.SystemController;
+import com.chain.autostoragesystem.api.IImportBus;
+import com.chain.autostoragesystem.entity.custom.SystemControllerEntity;
 import com.chain.autostoragesystem.utils.ChatUtil;
 import com.chain.autostoragesystem.utils.minecraft.BlockGetterUtils;
 import com.chain.autostoragesystem.utils.minecraft.NamesUtil;
@@ -12,14 +13,14 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
+import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
 public class DebugItem extends Item {
 
-    private SystemController systemController = null;
+    private LazyOptional<SystemControllerEntity> systemControllerOp = LazyOptional.empty();
 
     public DebugItem(CreativeModeTab tab) {
         super(new Item.Properties().tab(Objects.requireNonNull(tab)));
@@ -38,14 +39,13 @@ public class DebugItem extends Item {
 
                 trySetController(level, player, position);
 
-                BlockGetterUtils.tryGetBlockEntity(pContext.getLevel(), position)
+                BlockGetterUtils.tryGetBlockEntity(level, position)
                         .ifPresent(blockEntity -> {
-                            blockEntity.getCapability(ModCapabilities.IMPORT_BUS_CAPABILITY)
-                                    .ifPresent((importBus) -> {
-                                        if (this.systemController != null) {
-                                            this.systemController.addImportBus(player, importBus);
-                                        }
-                                    });
+                            LazyOptional<IImportBus> importBusLazyOptional = blockEntity.getCapability(ModCapabilities.IMPORT_BUS_CAPABILITY);
+
+                            systemControllerOp.ifPresent(systemController -> {
+                                systemController.addImportBus(player, importBusLazyOptional);
+                            });
                         });
             }
         }
@@ -57,13 +57,16 @@ public class DebugItem extends Item {
                                  @NotNull Player player,
                                  @NotNull BlockPos position) {
 
-        Block block = level.getBlockState(position).getBlock();
+        BlockGetterUtils.tryGetBlockEntity(level, position)
+                .ifPresent((blockEntity -> {
+                    if (blockEntity instanceof SystemControllerEntity systemController) {
+                        systemController.player = player;
 
-        if (block instanceof SystemController) {
-            this.systemController = (SystemController) block;
+                        this.systemControllerOp = LazyOptional.of(() -> systemController);
 
-            String log = "Setting done: " + NamesUtil.getBlockNameAndCoordinatesLog(position, block);
-            ChatUtil.playerSendMessage(player, log);
-        }
+                        String log = "Setting done: " + NamesUtil.getBlockEntityNameAndCoordinatesLog(position, blockEntity);
+                        ChatUtil.playerSendMessage(player, log);
+                    }
+                }));
     }
 }
