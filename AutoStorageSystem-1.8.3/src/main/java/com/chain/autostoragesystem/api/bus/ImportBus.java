@@ -8,7 +8,6 @@ import net.minecraftforge.items.IItemHandler;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ImportBus extends ItemHandlersConnector implements IImportBus {
@@ -22,14 +21,13 @@ public class ImportBus extends ItemHandlersConnector implements IImportBus {
     }
 
     @Override
-    public Set<ImportRequest> getImportRequests() {
+    public List<ImportRequest> getImportRequests() {
         return this.connectedInventories.stream()
                 .flatMap(inventory -> getImportRequest(inventory).stream())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     //todo учитывать фильтры
-    //todo должен быть отсортирован по увеличению номера слота
     private List<ImportRequest> getImportRequest(IItemHandler inventory) {
         List<ImportRequest> requests = new ArrayList<>();
 

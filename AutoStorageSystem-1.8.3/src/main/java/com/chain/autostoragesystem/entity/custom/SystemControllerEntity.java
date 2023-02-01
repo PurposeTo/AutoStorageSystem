@@ -45,10 +45,8 @@ import java.util.stream.Collectors;
  */
 //todo должен быть один на всю систему
 public class SystemControllerEntity extends BlockEntity {
-
-
     private final ProgressManager progressManager;
-    private final int operationCapacity = 5; //todo баг: если в инвентарь нужно положить предметов меньше, чем это число, то оно вовсе не кладется.
+    private final int operationCapacity = 5;
     private final int totalOperationSpeed = Math.max(Math.round(0.25f * TimeUtil.TICKS_PER_SECOND), 1);
 
     List<Object> storages; // can import or export to storage. Items visible in SystemMaster menu.
