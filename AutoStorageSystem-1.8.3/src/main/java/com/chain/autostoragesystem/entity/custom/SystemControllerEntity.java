@@ -1,9 +1,9 @@
 package com.chain.autostoragesystem.entity.custom;
 
-import com.chain.autostoragesystem.api.ItemHandlerWrapper;
 import com.chain.autostoragesystem.api.ProgressManager;
 import com.chain.autostoragesystem.api.bus.IImportBus;
 import com.chain.autostoragesystem.api.bus.ImportRequest;
+import com.chain.autostoragesystem.api.wrappers.ItemHandlerWrapper;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.utils.ChatUtil;
 import com.chain.autostoragesystem.utils.minecraft.Levels;

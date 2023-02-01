@@ -1,13 +1,10 @@
-package com.chain.autostoragesystem.api;
+package com.chain.autostoragesystem.api.wrappers;
 
-import com.chain.autostoragesystem.utils.minecraft.ItemStackUtil;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ItemHandlerWrapper implements IItemHandler {
     private final IItemHandler itemHandler;
@@ -26,7 +23,8 @@ public class ItemHandlerWrapper implements IItemHandler {
         ItemStack toMoveSimulate = extractItem(fromSlot, expectedAmount, true);
         ItemStack remainingStackSimulate = receiverWrap.insertItem(toMoveSimulate, true);
 
-        if (ItemStackUtil.equalsStackWithRemaining(toMoveSimulate, remainingStackSimulate)) {
+        ItemStackWrapper toMoveSimulateWrap = new ItemStackWrapper(toMoveSimulate);
+        if (toMoveSimulateWrap.equalsStackWithRemaining(remainingStackSimulate)) {
             return false;
         }
 
@@ -51,8 +49,9 @@ public class ItemHandlerWrapper implements IItemHandler {
         int slots = getSlots();
         for (int slot = 0; slot < slots; slot++) {
             ItemStack stackInSlot = getStackInSlot(slot);
-            boolean isStackFull = ItemStackUtil.isFull(stackInSlot);
+            ItemStackWrapper wrapper = new ItemStackWrapper(stackInSlot);
 
+            boolean isStackFull = wrapper.isFull();
             if (!isStackFull) {
                 break;
             }
@@ -60,20 +59,6 @@ public class ItemHandlerWrapper implements IItemHandler {
 
         return isFull;
     }
-
-    public List<ItemStack> getNotFullStacks() {
-        List<ItemStack> itemStacks = new ArrayList<>();
-
-        int slots = getSlots();
-        for (int slot = 0; slot < slots; slot++) {
-            ItemStack stack = getStackInSlot(slot);
-            if (!ItemStackUtil.isFull(stack)) {
-                itemStacks.add(stack);
-            }
-        }
-        return itemStacks;
-    }
-
 
     public boolean canInsertUnstackableItem(ItemStack unstackableItem) {
         if (unstackableItem.isStackable()) {
@@ -105,8 +90,10 @@ public class ItemHandlerWrapper implements IItemHandler {
 
         int slots = getSlots();
         for (int slot = 0; slot < slots; slot++) {
-            ItemStack toReceive = getStackInSlot(slot);
-            if (ItemStackUtil.canAccept(toInsert, toReceive)) {
+            ItemStack stackInSlot = getStackInSlot(slot);
+            ItemStackWrapper stackInSlotWrap = new ItemStackWrapper(stackInSlot);
+
+            if (stackInSlotWrap.canAccept(toInsert)) {
                 toInsert = insertItem(slot, toInsert, simulate);
                 if (toInsert.isEmpty()) {
                     break;

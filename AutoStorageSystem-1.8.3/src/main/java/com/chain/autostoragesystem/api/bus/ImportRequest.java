@@ -1,6 +1,6 @@
 package com.chain.autostoragesystem.api.bus;
 
-import com.chain.autostoragesystem.api.ItemHandlerWrapper;
+import com.chain.autostoragesystem.api.wrappers.ItemHandlerWrapper;
 import lombok.Getter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
