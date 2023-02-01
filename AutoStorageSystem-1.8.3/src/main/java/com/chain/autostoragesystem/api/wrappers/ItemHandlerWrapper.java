@@ -5,12 +5,24 @@ import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ItemHandlerWrapper implements IItemHandler {
     private final IItemHandler itemHandler;
 
     public ItemHandlerWrapper(@Nonnull IItemHandler itemHandler) {
         this.itemHandler = itemHandler;
+    }
+
+    public List<ItemStack> getStacks() {
+        int slots = this.getSlots();
+        List<ItemStack> result = new ArrayList<>();
+        for (int slot = 0; slot < slots; slot++) {
+            ItemStack stack = this.getStackInSlot(slot);
+            result.add(stack);
+        }
+        return result;
     }
 
     // return - получилось ли переложить хотя бы часть
