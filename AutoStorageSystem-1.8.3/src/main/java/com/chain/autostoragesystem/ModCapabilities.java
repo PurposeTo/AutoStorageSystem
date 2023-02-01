@@ -1,7 +1,10 @@
 package com.chain.autostoragesystem;
 
-import com.chain.autostoragesystem.api.IImportBus;
-import net.minecraftforge.common.capabilities.*;
+import com.chain.autostoragesystem.api.bus.IImportBus;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 

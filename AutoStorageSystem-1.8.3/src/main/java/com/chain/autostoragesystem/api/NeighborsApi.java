@@ -10,8 +10,8 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import static com.chain.autostoragesystem.utils.minecraft.EntitiesUtils.*;
@@ -29,12 +29,12 @@ public class NeighborsApi {
      * Получить IItemHandler-ы, которые находятся вокруг указанной позиции
      * Исключая диагонали
      */
-    public static LinkedHashSet<IItemHandler> getItemHandlers(Level level, BlockPos sourcePos) {
+    public static List<IItemHandler> getItemHandlers(Level level, BlockPos sourcePos) {
         //The client doesn't know what is in a chest unless that chest is opened.
         //need to invoke on server
         Levels.requireServerSide(level);
 
-        LinkedHashSet<IItemHandler> orderedSet = new LinkedHashSet<>();
+        List<IItemHandler> orderedSet = new ArrayList<>();
 
         Arrays.stream(Direction.values())
                 .forEach(direction -> {

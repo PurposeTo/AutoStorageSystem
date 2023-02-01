@@ -1,8 +1,9 @@
 package com.chain.autostoragesystem.entity.custom;
 
-import com.chain.autostoragesystem.api.IImportBus;
-import com.chain.autostoragesystem.api.ImportRequest;
+import com.chain.autostoragesystem.api.ItemHandlerWrapper;
 import com.chain.autostoragesystem.api.ProgressManager;
+import com.chain.autostoragesystem.api.bus.IImportBus;
+import com.chain.autostoragesystem.api.bus.ImportRequest;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.utils.ChatUtil;
 import com.chain.autostoragesystem.utils.minecraft.Levels;
@@ -10,14 +11,16 @@ import com.chain.autostoragesystem.utils.minecraft.TimeUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashSet;
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,24 +48,22 @@ public class SystemControllerEntity extends BlockEntity {
 
 
     private final ProgressManager progressManager;
-    int operationCapacity = 1;
-    private int totalOperationSpeed;
+    private final int operationCapacity = 5; //todo баг: если в инвентарь нужно положить предметов меньше, чем это число, то оно вовсе не кладется.
+    private final int totalOperationSpeed = Math.max(Math.round(0.25f * TimeUtil.TICKS_PER_SECOND), 1);
 
     List<Object> storages; // can import or export to storage. Items visible in SystemMaster menu.
 
-    public Player player; // дебаг поле - вместо шины экспорта
-
-    // LinkedHashSet чтобы не хранить дубликаты и иметь очередность
+    // List чтобы не хранить дубликаты и иметь очередность
     // lazy, чтобы сам SystemControllerEntity мог удалить из списка тот, который был разрушен
-    LinkedHashSet<LazyOptional<IImportBus>> importBusesOps = new LinkedHashSet<>(); // can only import from these storages. Items don't visible in SystemMaster menu.
+    //todo точно надо lazy? может сделать отдельно поведение, чтобы удалять тот, что более не валиден?
+    List<LazyOptional<IImportBus>> importBusesOps = new ArrayList<>(); // can only import from these storages. Items don't visible in SystemMaster menu.
 
-    List<Object> exportStorages; // can only export to these storages. Items don't visible in SystemMaster menu.
+    List<ItemHandlerWrapper> exportStorages = new ArrayList<>(); // can only export to these storages. Items don't visible in SystemMaster menu.
 
 
     public SystemControllerEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModBlockEntities.SYSTEM_CONTROLLER_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
 
-        this.totalOperationSpeed = 2 * TimeUtil.TICKS_PER_SECOND;
         this.progressManager = new ProgressManager(totalOperationSpeed, this::doImport);
     }
 
@@ -105,32 +106,75 @@ public class SystemControllerEntity extends BlockEntity {
         ChatUtil.playerSendMessage(player, b.toString());
     }
 
+    //todo debug
+    public void addExportBus(Player player, LazyOptional<IImportBus> importBus) {
+        if (exportStorages.isEmpty()) {
+            IItemHandler itemHandler = player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).resolve().get();
+            ItemHandlerWrapper wrapper = new ItemHandlerWrapper(itemHandler);
+            exportStorages.add(wrapper);
+        }
 
-    // положить предмет из одного сундука в другой
-    //1. узнать, требуется ли положить куда-то предмет. Узнать количество требуемых элементов.
-    // (Все что есть, N-е количество и т.д. Зависит как от настроек кабеля, так и от вместимости инвентаря, т.е. количества свободных слотов)
-    //todo blacklist, whitelist фильтры, без фильтров. Приоритет загрузки в инвентарь.
-
-    //2. если да, то найти хранилище, где этот предмет есть.
-
-    //3. если такие хранилища найдены, то забрать из хранилищ
-    // "количество, не больше чем operationCapacity И не больше, чем требуется"
-
-    //4. положить забранные предметы в инвентарь из шага 1.
-    private void doImport() {
-        this.getImportRequests()
-                .stream()
-                .findFirst()
-                .ifPresent(importRequest -> {
-                    ItemStack itemStack = importRequest.execute();
-                    this.player.getInventory().add(itemStack);
-                });
     }
 
-    private LinkedHashSet<ImportRequest> getImportRequests() {
+
+    /*
+     * Может быть запрос "забрать предметы" - из importStorages (например, из сундука или готовые слитки из печки, готовый предмет из автоверстока).
+     * Откуда - из importStorages.
+     * Куда - в exportStorages или в storages. (Приоритет у exportStorages выше)
+     * todo Запрос выполняется одновременно для всех шин импорта
+     *
+     *
+     * 1. Взять запрос на изъятие предметов
+     * 2. Узнать, возможно ли его куда-либо положить (перебрать все инвентари, которые не полностью заполнены)
+     * 2.1 Если можно, то положить. Закончить процесс импорта.
+     * 2.2 Если нельзя, то попробовать положить в следующий слот
+     * 3. Если не нашли слоты, то закончить процесс импорта.
+     *
+     * Положить ItemStack:
+     * 1.1 Если весь размер влезает, то положить.
+     * 1.2 Если не весь влезает, то положить ту часть, что влезает.
+     * Ту часть, что не влезла, оставить в прежнем инвентаре.
+     */
+    private void doImport() {
+        List<ImportRequest> importRequests = this.getImportRequests();
+        boolean anyHandled = handleImport(importRequests);
+    }
+
+    /**
+     * Обработать хотя бы один (но не более одного)
+     * запроса импорта из списка, хотя бы частично
+     *
+     * @return успешно?
+     */
+    private boolean handleImport(@Nonnull List<ImportRequest> importRequests) {
+        return importRequests.stream().anyMatch(this::handleImport);
+    }
+
+    /**
+     * Обработать запрос импорта, хотя бы частично
+     *
+     * @return успешно?
+     */
+    private boolean handleImport(@Nonnull ImportRequest importRequest) {
+        ItemHandlerWrapper transmitter = importRequest.getInventory();
+        int transmitterSlot = importRequest.getSlot();
+
+        List<ItemHandlerWrapper> receiveInventories = exportStorages;
+        return receiveInventories
+                .stream()
+                .anyMatch(receiver -> transmitter.moveItemStack(transmitterSlot, operationCapacity, receiver));
+    }
+
+    private List<ImportRequest> getImportRequests() {
         return importBusesOps.stream()
                 .flatMap(it -> it.resolve().stream())
                 .flatMap(importBus -> importBus.getImportRequests().stream())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    private List<IImportBus> getImportBusses() {
+        return this.importBusesOps.stream()
+                .flatMap(it -> it.resolve().stream())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

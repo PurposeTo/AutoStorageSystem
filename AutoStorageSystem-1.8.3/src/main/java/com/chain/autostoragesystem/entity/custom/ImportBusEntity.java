@@ -1,9 +1,9 @@
 package com.chain.autostoragesystem.entity.custom;
 
 import com.chain.autostoragesystem.ModCapabilities;
-import com.chain.autostoragesystem.api.IImportBus;
-import com.chain.autostoragesystem.api.ImportBus;
 import com.chain.autostoragesystem.api.NeighborsApi;
+import com.chain.autostoragesystem.api.bus.IImportBus;
+import com.chain.autostoragesystem.api.bus.ImportBus;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.utils.minecraft.Levels;
 import net.minecraft.core.BlockPos;
@@ -17,20 +17,23 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImportBusEntity extends BlockEntity {
 
-    private final ImportBus importBus = new ImportBus();
+    private final ImportBus importBus;
 
-    // LinkedHashSet чтобы не хранить дубликаты и иметь очередность
     // Список хранит строго существующие IItemHandler-ы
-    LinkedHashSet<IItemHandler> connectedInventories = new LinkedHashSet<>();
+    List<IItemHandler> connectedInventories = new ArrayList<>();
 
-    LazyOptional<IImportBus> importBusLazyOptional = LazyOptional.of(() -> importBus);
+    LazyOptional<IImportBus> importBusLazyOptional;
 
     public ImportBusEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModBlockEntities.IMPORT_BUS_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
+
+        importBus = new ImportBus(pWorldPosition);
+        this.importBusLazyOptional = LazyOptional.of(() -> importBus);
     }
 
     @Override

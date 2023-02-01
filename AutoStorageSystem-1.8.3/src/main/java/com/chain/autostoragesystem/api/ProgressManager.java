@@ -3,11 +3,11 @@ package com.chain.autostoragesystem.api;
 public class ProgressManager {
 
     private int current = 0;
-    private int total;
+    private double total;
 
     private final Runnable action;
 
-    public ProgressManager(int total, Runnable action) {
+    public ProgressManager(double total, Runnable action) {
         assert total > current;
         this.total = total;
         this.action = action;
