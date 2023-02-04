@@ -1,5 +1,8 @@
 package com.chain.autostoragesystem.api.wrappers;
 
+import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
+import com.chain.autostoragesystem.api.wrappers.stack_in_slot.IStackInSlot;
+import com.chain.autostoragesystem.api.wrappers.stack_in_slot.StackInSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -7,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemHandlerWrapper implements IItemHandler {
     private final IItemHandler itemHandler;
@@ -15,18 +19,24 @@ public class ItemHandlerWrapper implements IItemHandler {
         this.itemHandler = itemHandler;
     }
 
-    public List<ItemStack> getStacks() {
+    public List<StackInSlot> getStacks() {
         int slots = this.getSlots();
-        List<ItemStack> result = new ArrayList<>();
+        List<StackInSlot> result = new ArrayList<>();
         for (int slot = 0; slot < slots; slot++) {
-            ItemStack stack = this.getStackInSlot(slot);
-            result.add(stack);
+            StackInSlot inventoryStack = new StackInSlot(this, slot);
+            result.add(inventoryStack);
         }
         return result;
     }
 
+    public List<IStackInSlot> getNotEmptyStacks() {
+        return getStacks().stream()
+                .filter(stack -> !stack.getItemStack().isEmpty())
+                .collect(Collectors.toList());
+    }
+
     // return - получилось ли переложить хотя бы часть
-    // expectedAmount - количество предметов, которое желательно переложить
+    // expectedAmount - количество предметов, которое хотим переложить
     public boolean moveItemStack(final int fromSlot,
                                  final int expectedAmount,
                                  @Nonnull final IItemHandler receiver) {
@@ -50,6 +60,17 @@ public class ItemHandlerWrapper implements IItemHandler {
         }
 
         return true;
+    }
+
+    public ItemStack moveItemStack(final StackInSlot toMove, final int toMoveCount, final IItemsReceiver itemsReceiver) {
+        ItemStack toMoveStack = toMove.extractItemStack(toMoveCount, false);
+        ItemStack remainingStack = itemsReceiver.insertItem(toMoveStack, false);
+
+        if (!remainingStack.isEmpty()) {
+            toMove.insertItem(remainingStack, false);
+        }
+
+        return remainingStack;
     }
 
     /**

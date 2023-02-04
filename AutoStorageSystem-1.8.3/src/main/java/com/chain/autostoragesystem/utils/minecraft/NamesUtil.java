@@ -2,6 +2,7 @@ package com.chain.autostoragesystem.utils.minecraft;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
@@ -22,5 +23,9 @@ public class NamesUtil {
 
     public static String getBlockEntityNameAndCoordinatesLog(BlockPos blockPos, BlockEntity blockEntity) {
         return getBlockNameAndCoordinatesLog(blockPos, blockEntity.getBlockState().getBlock());
+    }
+
+    public static String getItemName(Item item) {
+        return item.getRegistryName().toString();
     }
 }

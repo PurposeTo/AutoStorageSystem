@@ -2,8 +2,7 @@ package com.chain.autostoragesystem.entity.custom;
 
 import com.chain.autostoragesystem.ModCapabilities;
 import com.chain.autostoragesystem.api.NeighborsApi;
-import com.chain.autostoragesystem.api.bus.IImportBus;
-import com.chain.autostoragesystem.api.bus.ImportBus;
+import com.chain.autostoragesystem.api.bus.import_bus.ImportBus;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.utils.minecraft.Levels;
 import net.minecraft.core.BlockPos;

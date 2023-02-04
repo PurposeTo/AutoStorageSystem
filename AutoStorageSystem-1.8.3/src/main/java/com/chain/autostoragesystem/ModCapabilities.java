@@ -1,6 +1,5 @@
 package com.chain.autostoragesystem;
 
-import com.chain.autostoragesystem.api.bus.IImportBus;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
