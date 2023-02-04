@@ -1,8 +1,8 @@
-package com.chain.autostoragesystem.api.bus.import_filters;
+package com.chain.autostoragesystem.api.bus.filters;
 
 import net.minecraft.world.item.Item;
 
-public class EmptyImportFilters implements IImportFilters {
+public class EmptyInventoryFilters implements IInventoryFilters {
 
     @Override
     public boolean canHoldItem(Item item) {

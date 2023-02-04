@@ -2,7 +2,7 @@ package com.chain.autostoragesystem.entity.custom;
 
 import com.chain.autostoragesystem.api.ProgressManager;
 import com.chain.autostoragesystem.api.bus.import_bus.ImportBus;
-import com.chain.autostoragesystem.api.wrappers.ItemHandlerWrapper;
+import com.chain.autostoragesystem.api.wrappers.item_handler.ItemHandlerWrapper;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.utils.minecraft.Levels;
 import com.chain.autostoragesystem.utils.minecraft.TimeUtil;
@@ -108,7 +108,9 @@ public class SystemControllerEntity extends BlockEntity {
 //    }
 
     private void doImport() {
-
+        List<ImportBus> importBuses = importBusesOps.stream()
+                .flatMap(it -> it.resolve().stream())
+                .toList();
     }
 
 }

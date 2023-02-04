@@ -26,7 +26,7 @@ public class ImportBusEntity extends BlockEntity {
     // Список хранит строго существующие IItemHandler-ы
     List<IItemHandler> connectedInventories = new ArrayList<>();
 
-    LazyOptional<IImportBus> importBusLazyOptional;
+    LazyOptional<ImportBus> importBusLazyOptional;
 
     public ImportBusEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModBlockEntities.IMPORT_BUS_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);

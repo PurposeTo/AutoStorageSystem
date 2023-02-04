@@ -1,8 +1,8 @@
-package com.chain.autostoragesystem.api.bus.import_filters;
+package com.chain.autostoragesystem.api.bus.filters;
 
 import net.minecraft.world.item.Item;
 
-public interface IImportFilters {
+public interface IInventoryFilters {
 
     /**
      * Может ли в инвентаре находиться данный предмет

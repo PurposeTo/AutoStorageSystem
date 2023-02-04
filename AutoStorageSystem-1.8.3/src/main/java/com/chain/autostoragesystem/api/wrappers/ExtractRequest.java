@@ -6,23 +6,27 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class ExtractRequest {
-    private final IStackInSlot inventoryStack;
+    private final IStackInSlot stackInSlot;
     private final int countToExtract;
 
-    public ExtractRequest(IStackInSlot inventoryStack, int countToExtract) {
-        this.inventoryStack = inventoryStack;
+    public ExtractRequest(IStackInSlot stackInSlot, int countToExtract) {
+        this.stackInSlot = stackInSlot;
         this.countToExtract = countToExtract;
     }
 
-    public ExtractRequest(IStackInSlot inventoryStack) {
-        this(inventoryStack, inventoryStack.getCount());
+    public ExtractRequest(IStackInSlot stackInSlot) {
+        this(stackInSlot, stackInSlot.getCount());
     }
 
     public ItemStack moveItemStack(final IItemsReceiver itemsReceiver) {
-        return this.inventoryStack.moveItemStack(this.countToExtract, itemsReceiver);
+        return this.stackInSlot.moveItemStack(this.countToExtract, itemsReceiver);
     }
 
     public Item getItemType() {
-        return this.inventoryStack.getItemStack().getItem();
+        return this.stackInSlot.resolve().getItem();
+    }
+
+    public IStackInSlot getStackInSlot() {
+        return this.getStackInSlot();
     }
 }

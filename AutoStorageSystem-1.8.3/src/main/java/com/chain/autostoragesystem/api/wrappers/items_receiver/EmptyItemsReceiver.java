@@ -8,5 +8,11 @@ public class EmptyItemsReceiver implements IItemsReceiver {
     public ItemStack insertItem(@NotNull ItemStack itemStack, boolean simulate) {
         return itemStack;
     }
+
+    @NotNull
+    @Override
+    public ItemStack insertItem(int slot, @NotNull ItemStack itemStack, boolean simulate) {
+        return itemStack;
+    }
 }
 

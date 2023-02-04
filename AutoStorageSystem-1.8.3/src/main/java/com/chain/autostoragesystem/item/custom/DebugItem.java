@@ -1,6 +1,5 @@
 package com.chain.autostoragesystem.item.custom;
 
-import com.chain.autostoragesystem.ModCapabilities;
 import com.chain.autostoragesystem.entity.custom.SystemControllerEntity;
 import com.chain.autostoragesystem.utils.ChatUtil;
 import com.chain.autostoragesystem.utils.minecraft.BlockGetterUtils;
@@ -38,20 +37,20 @@ public class DebugItem extends Item {
 
                 trySetController(level, player, position);
 
-                BlockGetterUtils.tryGetBlockEntity(level, position)
-                        .ifPresent(blockEntity -> {
-                            LazyOptional<IImportBus> importBusLazyOptional = blockEntity.getCapability(ModCapabilities.IMPORT_BUS_CAPABILITY);
-
-                            systemControllerOp.ifPresent(systemController -> {
-
-                                //todo debug
-                                systemController.addExportBus(player, null);
-
-                                if (importBusLazyOptional.isPresent()) {
-                                    systemController.addImportBus(player, importBusLazyOptional);
-                                }
-                            });
-                        });
+//                BlockGetterUtils.tryGetBlockEntity(level, position)
+//                        .ifPresent(blockEntity -> {
+//                            LazyOptional<IImportBus> importBusLazyOptional = blockEntity.getCapability(ModCapabilities.IMPORT_BUS_CAPABILITY);
+//
+//                            systemControllerOp.ifPresent(systemController -> {
+//
+//                                //todo debug
+//                                systemController.addExportBus(player, null);
+//
+//                                if (importBusLazyOptional.isPresent()) {
+//                                    systemController.addImportBus(player, importBusLazyOptional);
+//                                }
+//                            });
+//                        });
             }
         }
 

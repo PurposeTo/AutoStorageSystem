@@ -1,7 +1,8 @@
 package com.chain.autostoragesystem.api.wrappers.stack_in_slot;
 
-import com.chain.autostoragesystem.api.wrappers.ItemHandlerWrapper;
+import com.chain.autostoragesystem.api.wrappers.item_handler.ItemHandlerWrapper;
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -17,24 +18,35 @@ public class StackInSlot implements IStackInSlot {
     private final int slot;
 
     public StackInSlot(@Nonnull ItemHandlerWrapper itemHandler, int slot) {
-        ItemStack stack = itemHandler.getStackInSlot(slot);
-
         this.itemHandler = itemHandler;
         this.slot = slot;
     }
 
-    public ItemStack moveItemStack(final int toMoveCount, final IItemsReceiver itemsReceiver) {
-        return this.itemHandler.moveItemStack(this, toMoveCount, itemsReceiver);
+    @Override
+    public boolean isEmpty() {
+        return resolve().isEmpty();
     }
 
+    @Override
     public int getCount() {
-        return getItemStack().getCount();
+        return resolve().getCount();
+    }
+
+    @Override
+    public @NotNull Item getItem() {
+        return resolve().getItem();
+    }
+
+    @Override
+    public int getSlot() {
+        return this.slot;
     }
 
     /**
      * see {@link IItemHandler#getStackInSlot(int)}
      **/
-    public ItemStack getItemStack() {
+    @Override
+    public @NotNull ItemStack resolve() {
         return this.itemHandler.getStackInSlot(slot);
     }
 
@@ -42,6 +54,7 @@ public class StackInSlot implements IStackInSlot {
      * see {@link IItemHandler#extractItem(int, int, boolean)}
      **/
     @NotNull
+    @Override
     public ItemStack extractItemStack(boolean simulate) {
         int count = getCount();
         return extractItemStack(count, simulate);
@@ -51,6 +64,7 @@ public class StackInSlot implements IStackInSlot {
      * see {@link IItemHandler#extractItem(int, int, boolean)}
      **/
     @NotNull
+    @Override
     public ItemStack extractItemStack(int amount, boolean simulate) {
         return this.itemHandler.extractItem(this.slot, amount, simulate);
     }
@@ -59,7 +73,19 @@ public class StackInSlot implements IStackInSlot {
      * see {@link IItemHandler#insertItem(int, ItemStack, boolean)}
      **/
     @NotNull
+    @Override
     public ItemStack insertItem(@NotNull ItemStack stack, boolean simulate) {
         return this.itemHandler.insertItem(this.slot, stack, simulate);
+    }
+
+    @Override
+    public @NotNull ItemStack moveItemStack(final IItemsReceiver itemsReceiver) {
+        int count = getCount();
+        return moveItemStack(count, itemsReceiver);
+    }
+
+    @Override
+    public @NotNull ItemStack moveItemStack(final int toMoveCount, final IItemsReceiver itemsReceiver) {
+        return this.itemHandler.moveItemStack(this, toMoveCount, itemsReceiver);
     }
 }

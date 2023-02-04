@@ -1,5 +1,6 @@
-package com.chain.autostoragesystem.api.wrappers;
+package com.chain.autostoragesystem.api.wrappers.item_handler;
 
+import com.chain.autostoragesystem.api.wrappers.ItemStackWrapper;
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.IStackInSlot;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.StackInSlot;
@@ -12,14 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ItemHandlerWrapper implements IItemHandler {
+public class ItemHandlerWrapper implements IItemHandlerWrapper {
     private final IItemHandler itemHandler;
 
     public ItemHandlerWrapper(@Nonnull IItemHandler itemHandler) {
         this.itemHandler = itemHandler;
     }
 
-    public List<StackInSlot> getStacks() {
+    @Override
+    public @NotNull List<StackInSlot> getStacks() {
         int slots = this.getSlots();
         List<StackInSlot> result = new ArrayList<>();
         for (int slot = 0; slot < slots; slot++) {
@@ -29,39 +31,21 @@ public class ItemHandlerWrapper implements IItemHandler {
         return result;
     }
 
-    public List<IStackInSlot> getNotEmptyStacks() {
+    @Override
+    public @NotNull List<IStackInSlot> getNotEmptyStacks() {
         return getStacks().stream()
-                .filter(stack -> !stack.getItemStack().isEmpty())
+                .filter(IStackInSlot::notEmpty)
                 .collect(Collectors.toList());
     }
 
-    // return - получилось ли переложить хотя бы часть
-    // expectedAmount - количество предметов, которое хотим переложить
-    public boolean moveItemStack(final int fromSlot,
-                                 final int expectedAmount,
-                                 @Nonnull final IItemHandler receiver) {
-        ItemHandlerWrapper receiverWrap = new ItemHandlerWrapper(receiver);
-
-        ItemStack toMoveSimulate = extractItem(fromSlot, expectedAmount, true);
-        ItemStack remainingStackSimulate = receiverWrap.insertItem(toMoveSimulate, true);
-
-        ItemStackWrapper toMoveSimulateWrap = new ItemStackWrapper(toMoveSimulate);
-        if (toMoveSimulateWrap.equalsStackWithRemaining(remainingStackSimulate)) {
-            return false;
-        }
-
-        int amountCanMove = toMoveSimulate.getCount() - remainingStackSimulate.getCount();
-        ItemStack canToMove = extractItem(fromSlot, amountCanMove, false);
-
-        ItemStack remainingStack = receiverWrap.insertItem(canToMove, false);
-
-        if (!remainingStack.isEmpty()) {
-            throw new IllegalStateException("remainingStack can't be not empty");
-        }
-
-        return true;
+    @Override
+    public @NotNull List<IStackInSlot> getEmptyStacks() {
+        return getStacks().stream()
+                .filter(IStackInSlot::isEmpty)
+                .collect(Collectors.toList());
     }
 
+    @Override
     public ItemStack moveItemStack(final StackInSlot toMove, final int toMoveCount, final IItemsReceiver itemsReceiver) {
         ItemStack toMoveStack = toMove.extractItemStack(toMoveCount, false);
         ItemStack remainingStack = itemsReceiver.insertItem(toMoveStack, false);
@@ -76,30 +60,9 @@ public class ItemHandlerWrapper implements IItemHandler {
     /**
      * Можно ли в инвентарь добавить предметы, хотя бы подходящего типа
      */
+    @Override
     public boolean isFull() {
-        boolean isFull = true;
-
-        int slots = getSlots();
-        for (int slot = 0; slot < slots; slot++) {
-            ItemStack stackInSlot = getStackInSlot(slot);
-            ItemStackWrapper wrapper = new ItemStackWrapper(stackInSlot);
-
-            boolean isStackFull = wrapper.isFull();
-            if (!isStackFull) {
-                break;
-            }
-        }
-
-        return isFull;
-    }
-
-    public boolean canInsertUnstackableItem(ItemStack unstackableItem) {
-        if (unstackableItem.isStackable()) {
-            throw new IllegalArgumentException("This method is only for unstackable items");
-        }
-
-        int freeSlot = getFreeSlot();
-        return freeSlot != -1;
+        return getEmptyStacks().isEmpty();
     }
 
     /**
@@ -110,7 +73,8 @@ public class ItemHandlerWrapper implements IItemHandler {
      * It may be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
      * The returned ItemStack can be safely modified after.
      */
-    public ItemStack insertItem(final ItemStack itemStack, boolean simulate) {
+    @Override
+    public @NotNull ItemStack insertItem(final @NotNull ItemStack itemStack, boolean simulate) {
         ItemStack toInsert = itemStack.copy();
 
         if (toInsert.isEmpty()) {
@@ -147,7 +111,7 @@ public class ItemHandlerWrapper implements IItemHandler {
      * The returned ItemStack can be safely modified after.
      */
     @NotNull
-    public ItemStack insertUnstackableItem(ItemStack itemStack, boolean simulate) {
+    private ItemStack insertUnstackableItem(ItemStack itemStack, boolean simulate) {
         if (itemStack.isStackable()) {
             throw new IllegalArgumentException("This method is only for unstackable items");
         }
@@ -162,7 +126,7 @@ public class ItemHandlerWrapper implements IItemHandler {
      * Returns the first item stack that is empty.
      * Returns -1 if there are no empty slots
      */
-    public int getFreeSlot() {
+    private int getFreeSlot() {
         int slots = getSlots();
         for (int slot = 0; slot < slots; slot++) {
             ItemStack stack = getStackInSlot(slot);
@@ -177,8 +141,7 @@ public class ItemHandlerWrapper implements IItemHandler {
     /**
      * see {@link IItemHandler#getSlots()}
      **/
-    @Override
-    public int getSlots() {
+    private int getSlots() {
         return this.itemHandler.getSlots();
     }
 
@@ -195,8 +158,8 @@ public class ItemHandlerWrapper implements IItemHandler {
      **/
     @NotNull
     @Override
-    public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-        return this.itemHandler.insertItem(slot, stack, simulate);
+    public ItemStack insertItem(int slot, @NotNull ItemStack itemStack, boolean simulate) {
+        return this.itemHandler.insertItem(slot, itemStack, simulate);
     }
 
     /**
@@ -206,21 +169,5 @@ public class ItemHandlerWrapper implements IItemHandler {
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return this.itemHandler.extractItem(slot, amount, simulate);
-    }
-
-    /**
-     * see {@link IItemHandler#getSlotLimit(int)}
-     */
-    @Override
-    public int getSlotLimit(int slot) {
-        return this.itemHandler.getSlotLimit(slot);
-    }
-
-    /**
-     * see {@link IItemHandler#isItemValid(int, ItemStack)}
-     */
-    @Override
-    public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-        return this.itemHandler.isItemValid(slot, stack);
     }
 }

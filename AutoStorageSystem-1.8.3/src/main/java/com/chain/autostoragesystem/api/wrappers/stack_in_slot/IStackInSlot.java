@@ -1,22 +1,28 @@
 package com.chain.autostoragesystem.api.wrappers.stack_in_slot;
 
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public interface IStackInSlot {
 
-    @NotNull
-    ItemStack moveItemStack(final int toMoveCount, final IItemsReceiver itemsReceiver);
+    default boolean notEmpty() {
+        return !isEmpty();
+    }
+
+    boolean isEmpty();
 
     int getCount();
 
-    /**
-     * see {@link IItemHandler#getStackInSlot(int)}
-     **/
     @NotNull
-    ItemStack getItemStack();
+    Item getItem();
+
+    int getSlot();
+
+    @NotNull
+    ItemStack resolve();
 
     /**
      * see {@link IItemHandler#extractItem(int, int, boolean)}
@@ -35,4 +41,10 @@ public interface IStackInSlot {
      **/
     @NotNull
     ItemStack insertItem(@NotNull ItemStack stack, boolean simulate);
+
+    @NotNull
+    ItemStack moveItemStack(final IItemsReceiver itemsReceiver);
+
+    @NotNull
+    ItemStack moveItemStack(final int toMoveCount, final IItemsReceiver itemsReceiver);
 }
