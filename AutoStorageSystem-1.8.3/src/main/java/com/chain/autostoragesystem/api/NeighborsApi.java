@@ -18,7 +18,7 @@ import static com.chain.autostoragesystem.utils.minecraft.EntitiesUtils.*;
 
 public class NeighborsApi {
 
-    public static <T> List<T> get(Level level, BlockPos sourcePos, Capability<T> cap) {
+    public static <T> List<T> getCapabilities(Level level, BlockPos sourcePos, Capability<T> cap) {
         List<BlockPos> neighborsPos = getNeighborsPos(sourcePos);
         List<BlockEntity> neighborsEntity = mapToEntities(level, neighborsPos);
         return mapToCapability(neighborsEntity, cap);

@@ -19,7 +19,7 @@ public abstract class AbstractBus extends ItemHandlersConnector {
     protected IInventoryFilters filters = new EmptyInventoryFilters();
 
     @Nonnull
-    protected IItemsReceiver storageController = new EmptyItemsReceiver();
+    protected IItemsReceiver itemsReceiver = new EmptyItemsReceiver();
 
     protected AbstractBus(@Nonnull BlockPos pos) {
         this.pos = pos;
@@ -27,17 +27,10 @@ public abstract class AbstractBus extends ItemHandlersConnector {
 
     public abstract void tick();
 
-    public void setStorageController(@Nonnull IItemsReceiver storageController) {
-        this.storageController = storageController;
-        onStorageControllerUpdated(this.storageController);
-    }
-
-    public void setFilters(@Nonnull IInventoryFilters filters) {
-        this.filters = filters;
-        onFiltersUpdated(this.filters);
+    public void setItemsReceiver(@Nonnull IItemsReceiver itemsReceiver) {
+        this.itemsReceiver = itemsReceiver;
+        onStorageControllerUpdated(this.itemsReceiver);
     }
 
     protected abstract void onStorageControllerUpdated(@Nonnull IItemsReceiver storageController);
-
-    protected abstract void onFiltersUpdated(@Nonnull IInventoryFilters importFilters);
 }

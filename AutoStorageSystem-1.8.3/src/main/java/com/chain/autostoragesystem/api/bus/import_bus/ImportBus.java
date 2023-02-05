@@ -1,7 +1,6 @@
 package com.chain.autostoragesystem.api.bus.import_bus;
 
 import com.chain.autostoragesystem.api.bus.AbstractBus;
-import com.chain.autostoragesystem.api.bus.filters.IInventoryFilters;
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.items.IItemHandler;
@@ -30,17 +29,12 @@ public class ImportBus extends AbstractBus {
     @Override
     protected void onInventoriesUpdated(@Nonnull List<IItemHandler> connectedInventories) {
         this.inventories = connectedInventories.stream()
-                .map(iItemHandler -> new ImportInventory(iItemHandler, filters, storageController))
+                .map(iItemHandler -> new ImportInventory(iItemHandler, itemsReceiver))
                 .collect(Collectors.toList());
     }
 
     @Override
     protected void onStorageControllerUpdated(@Nonnull IItemsReceiver storageController) {
-        this.inventories.forEach(importInventory -> importInventory.setStoragesGroup(storageController));
-    }
-
-    @Override
-    protected void onFiltersUpdated(@Nonnull IInventoryFilters filters) {
-        this.inventories.forEach(importInventory -> importInventory.setFilters(filters));
+        this.inventories.forEach(importInventory -> importInventory.setItemsReceiver(storageController));
     }
 }

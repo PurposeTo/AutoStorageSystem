@@ -58,14 +58,15 @@ public class ImportBusEntity extends BlockEntity {
         Levels.requireServerSide(level);
 
         blockEntity.connectedInventories = NeighborsApi.getItemHandlers(level, pos);
-        blockEntity.updateInventoryBusState();
+        blockEntity.updateInventories();
+        blockEntity.importBus.tick();
     }
 
-    private void updateInventoryBusState() {
+    private void updateInventories() {
         importBus.setConnectedInventories(this.connectedInventories);
     }
 
-
+    @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
         if (cap == ModCapabilities.IMPORT_BUS_CAPABILITY) {
