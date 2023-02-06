@@ -1,9 +1,5 @@
 package com.chain.autostoragesystem.api.bus;
 
-import com.chain.autostoragesystem.api.bus.filters.EmptyInventoryFilters;
-import com.chain.autostoragesystem.api.bus.filters.IInventoryFilters;
-import com.chain.autostoragesystem.api.wrappers.items_receiver.EmptyItemsReceiver;
-import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 
@@ -15,22 +11,11 @@ public abstract class AbstractBus extends ItemHandlersConnector {
     @Nonnull
     protected final BlockPos pos;
 
-    @Nonnull
-    protected IInventoryFilters filters = new EmptyInventoryFilters();
-
-    @Nonnull
-    protected IItemsReceiver itemsReceiver = new EmptyItemsReceiver();
-
     protected AbstractBus(@Nonnull BlockPos pos) {
         this.pos = pos;
     }
 
     public abstract void tick();
 
-    public void setItemsReceiver(@Nonnull IItemsReceiver itemsReceiver) {
-        this.itemsReceiver = itemsReceiver;
-        onStorageControllerUpdated(this.itemsReceiver);
-    }
 
-    protected abstract void onStorageControllerUpdated(@Nonnull IItemsReceiver storageController);
 }
