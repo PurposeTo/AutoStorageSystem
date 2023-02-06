@@ -44,7 +44,7 @@ public class ItemHandlerGroup implements IItemHandlerWrapper {
 
     @Override
     public ItemStack moveItemStack(StackInSlot toMove, int toMoveCount, IItemsReceiver itemsReceiver) {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override

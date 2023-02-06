@@ -21,6 +21,7 @@ public class ModLanguageProvider extends LanguageProvider {
 
         this.add(ModBlocks.SYSTEM_CONTROLLER_BLOCK.get(), "System controller");
         this.add(ModBlocks.IMPORT_BUS_BLOCK.get(), "Import bus");
+        this.add(ModBlocks.EXPORT_BUS_BLOCK.get(), "Export bus");
 
         this.add("item." + ModMain.MOD_ID + ".debug_item.no_valuables", "No blocks found!");
     }

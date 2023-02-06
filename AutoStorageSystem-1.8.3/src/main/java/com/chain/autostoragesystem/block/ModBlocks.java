@@ -1,6 +1,7 @@
 package com.chain.autostoragesystem.block;
 
 import com.chain.autostoragesystem.ModMain;
+import com.chain.autostoragesystem.block.custom.ExportBusBlock;
 import com.chain.autostoragesystem.block.custom.ImportBusBlock;
 import com.chain.autostoragesystem.block.custom.SystemController;
 import com.chain.autostoragesystem.item.ModItems;
@@ -36,6 +37,11 @@ public class ModBlocks {
     public static final RegistryObject<Block> IMPORT_BUS_BLOCK = registerBlock(
             "import_bus_block",
             () -> new ImportBusBlock(getBlockProp()),
+            getItemProp(ModCreativeModeTab.MODE_TAB));
+
+    public static final RegistryObject<Block> EXPORT_BUS_BLOCK = registerBlock(
+            "export_bus_block",
+            () -> new ExportBusBlock(getBlockProp()),
             getItemProp(ModCreativeModeTab.MODE_TAB));
 
 

@@ -58,14 +58,6 @@ public class ItemHandlerWrapper implements IItemHandlerWrapper {
     }
 
     /**
-     * Можно ли в инвентарь добавить предметы, хотя бы подходящего типа
-     */
-    @Override
-    public boolean isFull() {
-        return getEmptyStacks().isEmpty();
-    }
-
-    /**
      * @param itemStack
      * @return Returns:
      * The remaining ItemStack that was not inserted

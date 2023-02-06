@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "autostoragesystem:block/export_bus_block"
+  }
+}

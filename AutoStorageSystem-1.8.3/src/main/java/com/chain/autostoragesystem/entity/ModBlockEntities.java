@@ -2,6 +2,7 @@ package com.chain.autostoragesystem.entity;
 
 import com.chain.autostoragesystem.ModMain;
 import com.chain.autostoragesystem.block.ModBlocks;
+import com.chain.autostoragesystem.entity.custom.ExportBusEntity;
 import com.chain.autostoragesystem.entity.custom.ImportBusEntity;
 import com.chain.autostoragesystem.entity.custom.SystemControllerEntity;
 import net.minecraft.world.level.block.Block;
@@ -24,6 +25,10 @@ public class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<ImportBusEntity>> IMPORT_BUS_BLOCK_ENTITY = registerBlockEntity(
             "import_bus_block_entity",
             () -> BlockEntityType.Builder.of(ImportBusEntity::new, ModBlocks.IMPORT_BUS_BLOCK.get()).build(null));
+
+    public static final RegistryObject<BlockEntityType<ExportBusEntity>> EXPORT_BUS_BLOCK_ENTITY = registerBlockEntity(
+            "export_bus_block_entity",
+            () -> BlockEntityType.Builder.of(ExportBusEntity::new, ModBlocks.EXPORT_BUS_BLOCK.get()).build(null));
 
 
     public static void registerAll(IEventBus eventBus) {

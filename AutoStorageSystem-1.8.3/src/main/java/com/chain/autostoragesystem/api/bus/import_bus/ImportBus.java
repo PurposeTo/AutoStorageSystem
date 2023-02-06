@@ -30,6 +30,7 @@ public class ImportBus extends AbstractBus implements IImportBus {
         }
     }
 
+    @Override
     public void setItemsReceiver(@Nonnull IItemsReceiver itemsReceiver) {
         this.itemsReceiver = itemsReceiver;
         onStorageControllerUpdated(this.itemsReceiver);

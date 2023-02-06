@@ -97,11 +97,14 @@ public class SystemControllerEntity extends BlockEntity {
         ItemHandlerGroup itemHandlerGroup = new ItemHandlerGroup(connectedInventories);
 
         var connectedImportBusses = NeighborsApi.getCapabilities(level, pos, ModCapabilities.IMPORT_BUS_CAPABILITY);
-
         for (var importBus : connectedImportBusses) {
             importBus.setItemsReceiver(itemHandlerGroup);
         }
 
+        var connectedExportBussed = NeighborsApi.getCapabilities(level, pos, ModCapabilities.EXPORT_BUS_CAPABILITY);
+        for (var exportBus : connectedExportBussed) {
+            exportBus.setItemsTransmitter(itemHandlerGroup);
+        }
 
     }
 

@@ -23,7 +23,6 @@ public class ImportInventory {
 
     @Setter
     private IItemsReceiver itemsReceiver;
-
     @Setter
     private IItemTypeFilters filters = ItemTypeFiltersFactory.getForImportBus();
     private Config config = Config.getDefault();
@@ -48,33 +47,32 @@ public class ImportInventory {
         int capacity = config.getMaxItemsPerOperation();
 
         List<Item> itemTypesToCheck = inventory.getItemTypes();
-        List<IStackInSlot> notEmptyStacks = inventory.getNotEmptyStacks();
+        List<IStackInSlot> invalidStacks = inventory.getNotEmptyStacks()
+                .stream()
+                .filter(stackInSlot -> !filters.canHoldItem(stackInSlot.getItem()))
+                .toList();
 
-
-        for (int i = 0; i < notEmptyStacks.size() && capacity > 0 && !itemTypesToCheck.isEmpty(); i++) {
-            IStackInSlot stackInSlot = notEmptyStacks.get(i);
+        for (int i = 0; i < invalidStacks.size() && capacity > 0 && !itemTypesToCheck.isEmpty(); i++) {
+            IStackInSlot stackInSlot = invalidStacks.get(i);
             Item itemType = stackInSlot.getItem();
 
             if (!itemTypesToCheck.contains(itemType)) {
                 continue;
             }
 
-            // Если данный тип предметов нельзя оставить, то убрать его.
-            if (!filters.canHoldItem(itemType)) {
-                final int itemsCount = stackInSlot.getCount();
+            final int itemsCount = stackInSlot.getCount();
 
-                ItemStack remaining = stackInSlot.moveItemStack(capacity, itemsReceiver);
+            ItemStack remaining = stackInSlot.moveItemStack(capacity, itemsReceiver);
 
-                final int remainingItemsCount = remaining.getCount();
-                final int importItemsCount = itemsCount - remainingItemsCount;
+            final int remainingItemsCount = remaining.getCount();
+            final int importItemsCount = itemsCount - remainingItemsCount;
 
-                // Изменить кол-во предметов, которые возможно импортировать
-                capacity -= importItemsCount;
+            // Изменить кол-во предметов, которые возможно импортировать
+            capacity -= importItemsCount;
 
-                // Если остаток не пустой, значит больше не получается больше импортировать данный тип предметов
-                if (!remaining.isEmpty()) {
-                    itemTypesToCheck.remove(itemType);
-                }
+            // Если остаток не пустой, значит больше не получается больше импортировать данный тип предметов
+            if (!remaining.isEmpty()) {
+                itemTypesToCheck.remove(itemType);
             }
         }
     }

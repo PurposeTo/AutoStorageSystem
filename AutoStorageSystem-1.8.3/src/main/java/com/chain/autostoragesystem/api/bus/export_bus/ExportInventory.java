@@ -1,92 +1,78 @@
 package com.chain.autostoragesystem.api.bus.export_bus;
 
-import com.chain.autostoragesystem.api.bus.filters.IInventoryFilters;
-import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
+import com.chain.autostoragesystem.api.ProgressManager;
+import com.chain.autostoragesystem.api.bus.filters.IItemTypeFilters;
+import com.chain.autostoragesystem.api.bus.filters.ItemTypeFiltersFactory;
+import com.chain.autostoragesystem.api.storage_system.Config;
 import com.chain.autostoragesystem.api.wrappers.item_handler.ItemHandlerWrapper;
+import com.chain.autostoragesystem.api.wrappers.items_transmitter.IItemsTransmitter;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.IStackInSlot;
-import com.chain.autostoragesystem.utils.minecraft.NamesUtil;
 import lombok.Setter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ExportInventory {
 
     private final ItemHandlerWrapper inventory;
+    private final ProgressManager progressManager;
 
     @Setter
-    private IInventoryFilters filters;
-
+    private IItemsTransmitter itemsTransmitter;
     @Setter
-    private IItemHandlerWrapper storagesGroup;
+    private IItemTypeFilters filters = ItemTypeFiltersFactory.getIronOreForExportBus();
+    private Config config = Config.getDefault();
 
-    public ExportInventory(@Nonnull ItemHandlerWrapper inventory,
-                           @Nonnull IInventoryFilters filters,
-                           @Nonnull IItemHandlerWrapper storagesGroup) {
-        this.inventory = inventory;
-        this.filters = filters;
-        this.storagesGroup = storagesGroup;
+    public ExportInventory(@Nonnull IItemHandler inventory,
+                           @Nonnull IItemsTransmitter itemsTransmitter) {
+        this.inventory = new ItemHandlerWrapper(inventory);
+        this.itemsTransmitter = itemsTransmitter;
+        this.progressManager = new ProgressManager(config.getPauseIntervalTicks(), this::doExport);
     }
 
     public void tick() {
-        Map<Item, List<IStackInSlot>> validItemsInStorages = findValidItems();
-        List<Item> itemTypes = validItemsInStorages.keySet().stream().toList();
-        //todo получить из мапы и отсортировать?
-        List<IStackInSlot> stacks = new ArrayList<>();
-
-        tryExportFromSystem(itemTypes, stacks);
+        progressManager.tick();
     }
 
-    private Map<Item, List<IStackInSlot>> findValidItems() {
-        return storagesGroup.getNotEmptyStacks()
-                .stream()
-                .collect(Collectors.groupingBy(IStackInSlot::getItem))
-                .entrySet()
-                .stream()
-                .filter(entry -> {
-                    Item itemType = entry.getKey();
-                    return canHoldItem(itemType);
-                })
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    public void setConfig(Config config) {
+        this.config = config;
+        progressManager.setDelay(config.getPauseIntervalTicks());
     }
 
-    private void tryExportFromSystem(@Nonnull List<Item> itemTypes, List<IStackInSlot> stacks) {
-        List<Item> ItemTypesToExport = new ArrayList<>(itemTypes);
+    private void doExport() {
+        int capacity = config.getMaxItemsPerOperation();
 
-        for (IStackInSlot stack : stacks) {
-            Item itemTypeToExtract = stack.getItem();
-            if (!ItemTypesToExport.contains(itemTypeToExtract)) {
+        List<Item> itemTypesToCheck = itemsTransmitter.getItemTypes();
+        List<IStackInSlot> validStacks = itemsTransmitter.getNotEmptyStacks()
+                .stream()
+                .filter(stackInSlot -> filters.canHoldItem(stackInSlot.getItem()))
+                .toList();
+
+        for (int i = 0; i < validStacks.size() && capacity > 0 && !itemTypesToCheck.isEmpty(); i++) {
+            IStackInSlot stackInSlot = validStacks.get(i);
+            Item itemType = stackInSlot.getItem();
+
+            if (!itemTypesToCheck.contains(itemType)) {
                 continue;
             }
 
-            ItemStack remaining = stack.moveItemStack(this.storagesGroup);
+            final int itemsCount = stackInSlot.getCount();
+
+            ItemStack remaining = stackInSlot.moveItemStack(capacity, inventory);
+
+            final int remainingItemsCount = remaining.getCount();
+            final int importItemsCount = itemsCount - remainingItemsCount;
+
+            // Изменить кол-во предметов, которые возможно экспортировать
+            capacity -= importItemsCount;
+
+            // Если остаток не пустой, значит больше не получается больше экспортировать данный тип предметов
             if (!remaining.isEmpty()) {
-                ItemTypesToExport.remove(remaining.getItem());
+                itemTypesToCheck.remove(itemType);
             }
         }
-    }
-
-    /**
-     * Может ли в инвентаре находиться данный предмет
-     */
-    private boolean canHoldItem(@Nonnull Item item) {
-        return this.filters.canHoldItem(item);
-    }
-
-    private boolean hasAmountLimit(@Nonnull Item item) {
-        return this.filters.hasAmountLimit(item);
-    }
-
-    private int getAmountLimit(@Nonnull Item item) {
-        if (!hasAmountLimit(item)) {
-            throw new IllegalArgumentException("Item " + NamesUtil.getItemName(item) + " has not amount limit");
-        }
-
-        return this.filters.getAmountLimit(item);
     }
 }

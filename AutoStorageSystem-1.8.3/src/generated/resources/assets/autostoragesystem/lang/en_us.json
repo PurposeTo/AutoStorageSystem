@@ -1,5 +1,6 @@
 {
   "block.autostoragesystem.citrine_block": "Citrine block",
+  "block.autostoragesystem.export_bus_block": "Export bus",
   "block.autostoragesystem.import_bus_block": "Import bus",
   "block.autostoragesystem.system_controller_block": "System controller",
   "item.autostoragesystem.citrine": "Citrine",
