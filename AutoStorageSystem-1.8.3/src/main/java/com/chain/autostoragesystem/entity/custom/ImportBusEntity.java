@@ -6,12 +6,9 @@ import com.chain.autostoragesystem.api.bus.import_bus.ImportBus;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.utils.minecraft.Levels;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -19,26 +16,25 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImportBusEntity extends BlockEntity {
+public class ImportBusEntity extends BaseBlockEntity {
 
     private final ImportBus importBus;
 
     // Список хранит строго существующие IItemHandler-ы
     List<IItemHandler> connectedInventories = new ArrayList<>();
 
-    LazyOptional<ImportBus> importBusLazyOptional;
 
     public ImportBusEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModBlockEntities.IMPORT_BUS_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
 
         importBus = new ImportBus(pWorldPosition);
-        this.importBusLazyOptional = LazyOptional.of(() -> importBus);
+        registerCapability(ModCapabilities.IMPORT_BUS_CAPABILITY, LazyOptional.of(() -> importBus));
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
-        importBusLazyOptional = LazyOptional.of(() -> importBus);
+        registerCapability(ModCapabilities.IMPORT_BUS_CAPABILITY, LazyOptional.of(() -> importBus));
     }
 
     @Override
@@ -66,18 +62,4 @@ public class ImportBusEntity extends BlockEntity {
         importBus.setConnectedInventories(this.connectedInventories);
     }
 
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-        if (cap == ModCapabilities.IMPORT_BUS_CAPABILITY) {
-            return importBusLazyOptional.cast();
-        }
-        return super.getCapability(cap, side);
-    }
-
-    @Override
-    public void invalidateCaps() {
-        super.invalidateCaps();
-        importBusLazyOptional.invalidate();
-    }
 }
