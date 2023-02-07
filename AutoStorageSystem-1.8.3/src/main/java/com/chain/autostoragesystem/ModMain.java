@@ -3,19 +3,23 @@ package com.chain.autostoragesystem;
 import com.chain.autostoragesystem.block.ModBlocks;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.item.ModItems;
+import com.chain.autostoragesystem.screen.ModMenuTypes;
+import com.chain.autostoragesystem.screen.custom.ExportBusScreen;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
@@ -38,9 +42,12 @@ public class ModMain
         ModItems.registerAll(eventBus);
         ModBlocks.registerAll(eventBus);
         ModBlockEntities.registerAll(eventBus);
+        ModMenuTypes.registerAll(eventBus);
 
         // Register the setup method for modloading
         eventBus.addListener(this::setup);
+
+        eventBus.addListener(this::clientSetup);
         // Register the enqueueIMC method for modloading
         eventBus.addListener(this::enqueueIMC);
         // Register the processIMC method for modloading
@@ -48,6 +55,10 @@ public class ModMain
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    private void clientSetup(final FMLClientSetupEvent event) {
+        MenuScreens.register(ModMenuTypes.EXPORT_BUS_MENU.get(), ExportBusScreen::new);
     }
 
     private void setup(final FMLCommonSetupEvent event)

@@ -4,22 +4,38 @@ import com.chain.autostoragesystem.ModCapabilities;
 import com.chain.autostoragesystem.api.NeighborsApi;
 import com.chain.autostoragesystem.api.bus.export_bus.ExportBus;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
+import com.chain.autostoragesystem.screen.custom.ExportBusMenu;
 import com.chain.autostoragesystem.utils.minecraft.Levels;
+import com.chain.autostoragesystem.utils.minecraft.NamesUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExportBusEntity extends BlockEntity {
+public class ExportBusEntity extends BlockEntity implements MenuProvider {
+    private final ItemStackHandler filters = new ItemStackHandler(27){
+        @Override //todo зачем?
+        protected void onContentsChanged(int slot) {
+            setChanged();
+        }
+    };
 
     private final ExportBus exportBus;
 
@@ -79,5 +95,17 @@ public class ExportBusEntity extends BlockEntity {
     public void invalidateCaps() {
         super.invalidateCaps();
         exportBusLazyOptional.invalidate();
+    }
+
+    @NotNull
+    @Override
+    public Component getDisplayName() {
+        return new TextComponent(NamesUtil.getBlockEntityName(this));
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
+        return new ExportBusMenu(pContainerId, pInventory, this);
     }
 }
