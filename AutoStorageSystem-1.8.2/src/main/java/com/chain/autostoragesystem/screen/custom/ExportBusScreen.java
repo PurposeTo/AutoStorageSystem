@@ -15,6 +15,9 @@ public class ExportBusScreen extends AbstractContainerScreen<ExportBusMenu> {
 
     public ExportBusScreen(ExportBusMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
+
+        this.imageWidth = 195;
+        this.imageHeight = 168;
     }
 
     @Override

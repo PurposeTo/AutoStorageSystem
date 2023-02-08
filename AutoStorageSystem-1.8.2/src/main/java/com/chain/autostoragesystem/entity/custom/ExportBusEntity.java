@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -19,7 +20,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,10 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExportBusEntity extends BaseBlockEntity implements MenuProvider {
-    private final ItemStackHandler filters = new ItemStackHandler(27) {
-        @Override //todo зачем?
-        protected void onContentsChanged(int slot) {
-            setChanged();
+    private final SimpleContainer filters = new SimpleContainer(4) {
+
+        //todo обновить
+        @Override
+        public boolean stillValid(Player player) {
+            return true;
         }
     };
 
@@ -44,12 +46,14 @@ public class ExportBusEntity extends BaseBlockEntity implements MenuProvider {
         super(ModBlockEntities.EXPORT_BUS_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
 
         exportBus = new ExportBus(pWorldPosition);
+        registerCapability(ModCapabilities.CONTAINER_CAPABILITY, LazyOptional.of(() -> filters));
         registerCapability(ModCapabilities.EXPORT_BUS_CAPABILITY, LazyOptional.of(() -> exportBus));
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
+        registerCapability(ModCapabilities.CONTAINER_CAPABILITY, LazyOptional.of(() -> filters));
         registerCapability(ModCapabilities.EXPORT_BUS_CAPABILITY, LazyOptional.of(() -> exportBus));
     }
 
