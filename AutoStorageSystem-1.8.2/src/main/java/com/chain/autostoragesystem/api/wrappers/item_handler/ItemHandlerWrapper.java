@@ -166,6 +166,7 @@ public class ItemHandlerWrapper implements IItemHandlerWrapper {
         return this.itemHandler.extractItem(slot, amount, simulate);
     }
 
+    //todo а если понадобиться сравнивать с другими реализациями этого интерфейса?
     @Override
     public boolean same(@NotNull IItemHandlerWrapper itemHandler) {
         if (itemHandler instanceof ItemHandlerWrapper wrapper) {
