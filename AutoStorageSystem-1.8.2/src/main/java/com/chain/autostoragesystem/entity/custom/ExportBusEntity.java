@@ -1,12 +1,15 @@
 package com.chain.autostoragesystem.entity.custom;
 
 import com.chain.autostoragesystem.ModCapabilities;
-import com.chain.autostoragesystem.api.NeighborsApi;
 import com.chain.autostoragesystem.api.bus.export_bus.ExportBus;
+import com.chain.autostoragesystem.api.bus.filters.ItemTypeFiltersFactory;
+import com.chain.autostoragesystem.api.connection.Connection;
+import com.chain.autostoragesystem.api.connection.IConnection;
+import com.chain.autostoragesystem.api.wrappers.ItemHandlerGroup;
+import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.screen.custom.ExportBusMenu;
 import com.chain.autostoragesystem.utils.minecraft.Levels;
-import com.chain.autostoragesystem.utils.minecraft.NamesUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,7 +22,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,25 +29,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExportBusEntity extends BaseBlockEntity implements MenuProvider {
-    private final SimpleContainer filters = new SimpleContainer(4) {
-
-        //todo обновить
-        @Override
-        public boolean stillValid(Player player) {
-            return true;
-        }
-    };
+    private final SimpleContainer filters = new SimpleContainer(4);
 
     private final ExportBus exportBus;
 
-    // Список хранит строго существующие IItemHandler-ы
-    List<IItemHandler> connectedInventories = new ArrayList<>();
+    private final IConnection connection = new Connection(this);
+
+    private final ItemHandlerGroup itemsTransmitter = new ItemHandlerGroup();
 
 
     public ExportBusEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModBlockEntities.EXPORT_BUS_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
 
-        exportBus = new ExportBus(pWorldPosition);
+        exportBus = new ExportBus(new ArrayList<>(), itemsTransmitter, ItemTypeFiltersFactory.getFromContainer(filters));
+        registerCapability(ModCapabilities.CONNECTION_CAPABILITY, LazyOptional.of(() -> connection));
         registerCapability(ModCapabilities.CONTAINER_CAPABILITY, LazyOptional.of(() -> filters));
         registerCapability(ModCapabilities.EXPORT_BUS_CAPABILITY, LazyOptional.of(() -> exportBus));
     }
@@ -53,6 +50,7 @@ public class ExportBusEntity extends BaseBlockEntity implements MenuProvider {
     @Override
     public void onLoad() {
         super.onLoad();
+        registerCapability(ModCapabilities.CONNECTION_CAPABILITY, LazyOptional.of(() -> connection));
         registerCapability(ModCapabilities.CONTAINER_CAPABILITY, LazyOptional.of(() -> filters));
         registerCapability(ModCapabilities.EXPORT_BUS_CAPABILITY, LazyOptional.of(() -> exportBus));
     }
@@ -73,19 +71,22 @@ public class ExportBusEntity extends BaseBlockEntity implements MenuProvider {
     public static void serverTick(Level level, BlockPos pos, BlockState state, ExportBusEntity blockEntity) {
         Levels.requireServerSide(level);
 
-        blockEntity.connectedInventories = NeighborsApi.getItemHandlers(level, pos);
-        blockEntity.updateInventories();
-        blockEntity.exportBus.tick();
-    }
+        List<IItemHandlerWrapper> storageInventories = blockEntity.connection.getAllConnections()
+                .stream()
+                .flatMap(connection -> connection.getNeighboursItemHandlers().stream())
+                .toList();
+        blockEntity.itemsTransmitter.resetItemHandlers(storageInventories);
 
-    private void updateInventories() {
-        exportBus.setConnectedInventories(this.connectedInventories);
+        List<IItemHandlerWrapper> connectedInventories = blockEntity.connection.getNeighboursItemHandlers();
+        blockEntity.exportBus.updateInventories(connectedInventories);
+
+        blockEntity.exportBus.tick();
     }
 
     @NotNull
     @Override
     public Component getDisplayName() {
-        return new TextComponent(NamesUtil.getBlockEntityName(this));
+        return new TextComponent("Whitelist filters");
     }
 
     @Nullable

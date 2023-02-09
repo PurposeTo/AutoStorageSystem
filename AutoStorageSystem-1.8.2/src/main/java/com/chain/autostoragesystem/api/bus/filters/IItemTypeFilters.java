@@ -3,7 +3,7 @@ package com.chain.autostoragesystem.api.bus.filters;
 import net.minecraft.world.item.Item;
 
 import javax.annotation.Nonnull;
-import java.util.List;
+import java.util.Set;
 
 public interface IItemTypeFilters {
     /**
@@ -16,5 +16,5 @@ public interface IItemTypeFilters {
     /**
      * Список типов предметов, которые могут находиться в инвентаре
      */
-    List<Item> getItemTypesFilters();
+    Set<Item> getItemTypesFilters();
 }

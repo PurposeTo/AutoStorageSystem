@@ -78,15 +78,6 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
         return ItemStack.EMPTY;
     }
 
-
-    /**
-     * Determines whether supplied player can use this container
-     */
-    @Override
-    public boolean stillValid(Player playerIn) {
-        return this.filters.stillValid(playerIn);
-    }
-
     /**
      * Called when the container is closed.
      */

@@ -9,13 +9,36 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ItemHandlerGroup implements IItemHandlerWrapper {
     private final List<IItemHandlerWrapper> list;
 
+    public ItemHandlerGroup() {
+        this.list = new ArrayList<>();
+    }
+
     public ItemHandlerGroup(@Nonnull List<IItemHandlerWrapper> list) {
         this.list = list;
+    }
+
+    public void resetItemHandlers(@Nonnull Collection<IItemHandlerWrapper> itemHandlerWrappers) {
+        clear();
+        list.addAll(itemHandlerWrappers);
+    }
+
+    public void addItemHandler(@Nonnull IItemHandlerWrapper itemHandler) {
+        list.add(itemHandler);
+    }
+
+    public void removeItemHandler(@Nonnull IItemHandlerWrapper itemHandler) {
+        list.remove(itemHandler);
+    }
+
+    public void clear() {
+        list.clear();
     }
 
     @NotNull
@@ -78,5 +101,10 @@ public class ItemHandlerGroup implements IItemHandlerWrapper {
     @Override
     public ItemStack insertItem(int slot, @NotNull ItemStack itemStack, boolean simulate) {
         throw new NotImplementedException();
+    }
+
+    @Override
+    public boolean same(@NotNull IItemHandlerWrapper itemHandler) {
+        return false; // because it's group of IItemHandler's
     }
 }

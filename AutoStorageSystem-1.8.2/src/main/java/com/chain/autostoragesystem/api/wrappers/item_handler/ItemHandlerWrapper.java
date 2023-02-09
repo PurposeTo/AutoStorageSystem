@@ -4,6 +4,7 @@ import com.chain.autostoragesystem.api.wrappers.ItemStackWrapper;
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.IStackInSlot;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.StackInSlot;
+import lombok.Getter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ItemHandlerWrapper implements IItemHandlerWrapper {
+
+    @Getter
     private final IItemHandler itemHandler;
 
     public ItemHandlerWrapper(@Nonnull IItemHandler itemHandler) {
@@ -161,5 +164,13 @@ public class ItemHandlerWrapper implements IItemHandlerWrapper {
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return this.itemHandler.extractItem(slot, amount, simulate);
+    }
+
+    @Override
+    public boolean same(@NotNull IItemHandlerWrapper itemHandler) {
+        if (itemHandler instanceof ItemHandlerWrapper wrapper) {
+            return this.itemHandler == wrapper.getItemHandler();
+        }
+        return false;
     }
 }

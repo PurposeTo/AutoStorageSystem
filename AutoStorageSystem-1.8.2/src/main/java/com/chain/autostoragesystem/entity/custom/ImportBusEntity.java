@@ -1,7 +1,6 @@
 package com.chain.autostoragesystem.entity.custom;
 
 import com.chain.autostoragesystem.ModCapabilities;
-import com.chain.autostoragesystem.api.NeighborsApi;
 import com.chain.autostoragesystem.api.bus.import_bus.ImportBus;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.utils.minecraft.Levels;
@@ -53,9 +52,9 @@ public class ImportBusEntity extends BaseBlockEntity {
     public static void serverTick(Level level, BlockPos pos, BlockState state, ImportBusEntity blockEntity) {
         Levels.requireServerSide(level);
 
-        blockEntity.connectedInventories = NeighborsApi.getItemHandlers(level, pos);
-        blockEntity.updateInventories();
-        blockEntity.importBus.tick();
+//        blockEntity.connectedInventories = NeighborsApi.getItemHandlers(level, pos);
+//        blockEntity.updateInventories();
+//        blockEntity.importBus.tick();
     }
 
     private void updateInventories() {

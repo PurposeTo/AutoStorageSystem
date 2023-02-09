@@ -1,5 +1,6 @@
 package com.chain.autostoragesystem.api.wrappers.items_transmitter;
 
+import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.IStackInSlot;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.StackInSlot;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmptyItemsTransmitter implements IItemsTransmitter{
+public class EmptyItemsTransmitter implements IItemsTransmitter {
     @NotNull
     @Override
     public List<StackInSlot> getStacks() {
@@ -37,5 +38,10 @@ public class EmptyItemsTransmitter implements IItemsTransmitter{
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean same(@NotNull IItemHandlerWrapper itemHandler) {
+        return false;
     }
 }

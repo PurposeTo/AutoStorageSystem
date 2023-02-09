@@ -2,6 +2,7 @@ package com.chain.autostoragesystem;
 
 import com.chain.autostoragesystem.api.bus.export_bus.IExportBus;
 import com.chain.autostoragesystem.api.bus.import_bus.IImportBus;
+import com.chain.autostoragesystem.api.connection.IConnection;
 import net.minecraft.world.Container;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -21,10 +22,14 @@ public class ModCapabilities {
     public static final Capability<Container> CONTAINER_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
     });
 
+    public static final Capability<IConnection> CONNECTION_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+    });
+
     @SubscribeEvent
     public static void initCapabilities(RegisterCapabilitiesEvent event) {
         event.register(Container.class);
         event.register(IImportBus.class);
         event.register(IExportBus.class);
+        event.register(IConnection.class);
     }
 }

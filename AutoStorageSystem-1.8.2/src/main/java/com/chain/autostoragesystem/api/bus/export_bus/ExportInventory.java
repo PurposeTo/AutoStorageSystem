@@ -2,34 +2,41 @@ package com.chain.autostoragesystem.api.bus.export_bus;
 
 import com.chain.autostoragesystem.api.ProgressManager;
 import com.chain.autostoragesystem.api.bus.filters.IItemTypeFilters;
-import com.chain.autostoragesystem.api.bus.filters.ItemTypeFiltersFactory;
 import com.chain.autostoragesystem.api.storage_system.Config;
-import com.chain.autostoragesystem.api.wrappers.item_handler.ItemHandlerWrapper;
+import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerComparer;
+import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
+import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
 import com.chain.autostoragesystem.api.wrappers.items_transmitter.IItemsTransmitter;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.IStackInSlot;
-import lombok.Setter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ExportInventory {
+public class ExportInventory implements IItemHandlerComparer {
 
-    private final ItemHandlerWrapper inventory;
+    @Nonnull
+    private final IItemsReceiver inventory;
+    @Nonnull
+    private final IItemsTransmitter itemsTransmitter;
+    @Nonnull
+    private final IItemTypeFilters filters;
+
+    @Nonnull
+    private Config config;
+    @Nonnull
     private final ProgressManager progressManager;
 
-    @Setter
-    private IItemsTransmitter itemsTransmitter;
-    @Setter
-    private IItemTypeFilters filters = ItemTypeFiltersFactory.getIronOreForExportBus();
-    private Config config = Config.getDefault();
-
-    public ExportInventory(@Nonnull IItemHandler inventory,
-                           @Nonnull IItemsTransmitter itemsTransmitter) {
-        this.inventory = new ItemHandlerWrapper(inventory);
+    public ExportInventory(@Nonnull IItemsReceiver inventory,
+                           @Nonnull IItemsTransmitter itemsTransmitter,
+                           @Nonnull IItemTypeFilters filters,
+                           @Nonnull Config config) {
+        this.inventory = inventory;
         this.itemsTransmitter = itemsTransmitter;
+        this.filters = filters;
+        this.config = config;
         this.progressManager = new ProgressManager(config.getPauseIntervalTicks(), this::doExport);
     }
 
@@ -37,7 +44,7 @@ public class ExportInventory {
         progressManager.tick();
     }
 
-    public void setConfig(Config config) {
+    public void setConfig(@Nonnull Config config) {
         this.config = config;
         progressManager.setDelay(config.getPauseIntervalTicks());
     }
@@ -74,5 +81,10 @@ public class ExportInventory {
                 itemTypesToCheck.remove(itemType);
             }
         }
+    }
+
+    @Override
+    public boolean same(@NotNull IItemHandlerWrapper itemHandler) {
+        return this.inventory.same(itemHandler);
     }
 }

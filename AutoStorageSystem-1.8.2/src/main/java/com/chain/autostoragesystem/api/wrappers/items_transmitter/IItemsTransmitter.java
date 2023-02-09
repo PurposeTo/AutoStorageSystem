@@ -1,5 +1,6 @@
 package com.chain.autostoragesystem.api.wrappers.items_transmitter;
 
+import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerComparer;
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.IStackInSlot;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.StackInSlot;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface IItemsTransmitter {
+public interface IItemsTransmitter extends IItemHandlerComparer {
 
     /**
      * Get items types in inventory

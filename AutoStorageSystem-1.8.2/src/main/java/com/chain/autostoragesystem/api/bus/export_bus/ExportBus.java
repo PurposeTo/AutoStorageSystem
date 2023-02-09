@@ -1,49 +1,60 @@
 package com.chain.autostoragesystem.api.bus.export_bus;
 
-import com.chain.autostoragesystem.api.bus.AbstractBus;
-import com.chain.autostoragesystem.api.wrappers.items_transmitter.EmptyItemsTransmitter;
+import com.chain.autostoragesystem.api.bus.filters.IItemTypeFilters;
+import com.chain.autostoragesystem.api.storage_system.Config;
+import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
 import com.chain.autostoragesystem.api.wrappers.items_transmitter.IItemsTransmitter;
-import net.minecraft.core.BlockPos;
-import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ExportBus extends AbstractBus implements IExportBus {
+public class ExportBus implements IExportBus {
+    @Nonnull
+    private final IItemsTransmitter itemsTransmitter;
+    @Nonnull
+    private final IItemTypeFilters filters;
 
     @Nonnull
-    private List<ExportInventory> inventories = new ArrayList<>();
-
+    private final List<ExportInventory> inventories;
     @Nonnull
-    private IItemsTransmitter itemsTransmitter = new EmptyItemsTransmitter();
+    private Config config = Config.getDefault();
 
-    public ExportBus(@Nonnull BlockPos pos) {
-        super(pos);
+    public ExportBus(@Nonnull List<IItemHandlerWrapper> inventories,
+                     @Nonnull IItemsTransmitter itemsTransmitter,
+                     @Nonnull IItemTypeFilters filters) {
+
+        this.itemsTransmitter = itemsTransmitter;
+        this.filters = filters;
+        this.inventories = inventories
+                .stream()
+                .map(itemHandler -> new ExportInventory(itemHandler, itemsTransmitter, filters, config))
+                .collect(Collectors.toList());
     }
 
-    @Override
     public void tick() {
         for (ExportInventory inventory : inventories) {
             inventory.tick();
         }
     }
 
-    @Override
-    protected void onInventoriesUpdated(@Nonnull List<IItemHandler> connectedInventories) {
-        this.inventories = connectedInventories.stream()
-                .map(iItemHandler -> new ExportInventory(iItemHandler, itemsTransmitter))
-                .collect(Collectors.toList());
+    public void updateInventories(@Nonnull List<IItemHandlerWrapper> inventories) {
+        List<ExportInventory> invalidExportInventories = this.inventories
+                .stream()
+                .filter(exportInv -> inventories.stream().noneMatch(exportInv::same))
+                .toList();
+        this.inventories.removeAll(invalidExportInventories);
+
+        var newInventories = inventories
+                .stream()
+                .filter(itemHandler -> this.inventories.stream().noneMatch(exportInventory -> exportInventory.same(itemHandler)))
+                .map(itemHandler -> new ExportInventory(itemHandler, itemsTransmitter, filters, config))
+                .toList();
+        this.inventories.addAll(newInventories);
     }
 
-    @Override
-    public void setItemsTransmitter(@Nonnull IItemsTransmitter itemsTransmitter) {
-        this.itemsTransmitter = itemsTransmitter;
-        onStorageControllerUpdated(this.itemsTransmitter);
-    }
-
-    protected void onStorageControllerUpdated(@Nonnull IItemsTransmitter storageController) {
-        this.inventories.forEach(importInventory -> importInventory.setItemsTransmitter(storageController));
+    public void setConfig(@Nonnull Config config) {
+        this.config = config;
+        inventories.forEach(inventory -> inventory.setConfig(config));
     }
 }
