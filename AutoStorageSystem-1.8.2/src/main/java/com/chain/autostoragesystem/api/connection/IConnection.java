@@ -37,11 +37,15 @@ public interface IConnection extends ICapabilityProvider {
         newConnections.add(this);
 
         while (!newConnections.isEmpty()) {
+            Set<IConnection> toAdd = new HashSet<>();
+            Set<IConnection> toRemove = new HashSet<>();
             for (IConnection connection : newConnections) {
                 connections.add(connection);
-                newConnections.addAll(connection.getNeighborConnections());
-                newConnections.removeAll(connections);
+                toAdd.addAll(connection.getNeighborConnections());
+                toRemove.addAll(connections);
             }
+            newConnections.addAll(toAdd);
+            newConnections.removeAll(toRemove);
         }
 
         connections.remove(this);
