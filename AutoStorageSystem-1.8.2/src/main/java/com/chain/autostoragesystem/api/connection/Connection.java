@@ -1,5 +1,7 @@
 package com.chain.autostoragesystem.api.connection;
 
+import com.chain.autostoragesystem.ModCapabilities;
+import com.chain.autostoragesystem.api.bus.storage_bus.IStorageBus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
@@ -10,7 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Connection implements IConnection {
 
@@ -35,5 +39,12 @@ public class Connection implements IConnection {
     @Override
     public @NotNull Level getLevel() {
         return Objects.requireNonNull(blockEntity.getLevel());
+    }
+
+    public List<IStorageBus> getStorageBusses() {
+        return getAllConnections()
+                .stream()
+                .flatMap(connection -> connection.getCapability(ModCapabilities.STORAGE_BUS).resolve().stream())
+                .collect(Collectors.toList());
     }
 }

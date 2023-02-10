@@ -4,7 +4,6 @@ import com.chain.autostoragesystem.ModCapabilities;
 import com.chain.autostoragesystem.api.bus.export_bus.ExportBus;
 import com.chain.autostoragesystem.api.bus.filters.ItemTypeFiltersFactory;
 import com.chain.autostoragesystem.api.connection.Connection;
-import com.chain.autostoragesystem.api.connection.IConnection;
 import com.chain.autostoragesystem.api.wrappers.ItemHandlerGroup;
 import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
@@ -26,7 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.TickableServer, MenuProvider {
-    private final IConnection connection = new Connection(this);
+    private final Connection connection = new Connection(this);
     private final SimpleContainer filters = new SimpleContainer(27);
 
     private final ExportBus exportBus;
@@ -65,9 +64,8 @@ public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.Ticka
 
     @Override
     public void tickServer() {
-        List<IItemHandlerWrapper> storageInventories = connection.getAllConnections()
+        List<IItemHandlerWrapper> storageInventories = connection.getStorageBusses()
                 .stream()
-                .flatMap(connection -> connection.getCapability(ModCapabilities.STORAGE_BUS).resolve().stream())
                 .flatMap(storageBus -> storageBus.getNeighboursItemHandlers().stream())
                 .toList();
         itemsTransmitter.resetItemHandlers(storageInventories);
