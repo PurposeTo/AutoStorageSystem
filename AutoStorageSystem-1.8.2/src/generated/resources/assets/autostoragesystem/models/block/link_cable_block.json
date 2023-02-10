@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cube_all",
   "textures": {
-    "all": "autostoragesystem:block/system_controller_block"
+    "all": "autostoragesystem:block/link_cable_block"
   }
 }

@@ -1,7 +1,7 @@
 package com.chain.autostoragesystem.block.custom;
 
 import com.chain.autostoragesystem.entity.ModBlockEntities;
-import com.chain.autostoragesystem.entity.custom.SystemControllerEntity;
+import com.chain.autostoragesystem.entity.custom.LinkCableEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-public class SystemController extends BaseEntityBlock {
+public class LinkCable extends BaseEntityBlock {
 
-    public SystemController(Properties properties) {
+    public LinkCable(Properties properties) {
         super(properties);
     }
 
@@ -31,14 +31,14 @@ public class SystemController extends BaseEntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
         return createTickerHelper(
                 pBlockEntityType,
-                ModBlockEntities.SYSTEM_CONTROLLER_BLOCK_ENTITY.get(),
-                pLevel.isClientSide() ? SystemControllerEntity::clientTick : SystemControllerEntity::serverTick);
+                ModBlockEntities.LINK_CABLE_BLOCK_ENTITY.get(),
+                pLevel.isClientSide() ? LinkCableEntity::clientTick : LinkCableEntity::serverTick);
     }
 
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new SystemControllerEntity(pPos, pState);
+        return new LinkCableEntity(pPos, pState);
     }
 }

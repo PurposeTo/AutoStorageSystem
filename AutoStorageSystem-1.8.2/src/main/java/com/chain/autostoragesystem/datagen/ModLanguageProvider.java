@@ -19,7 +19,7 @@ public class ModLanguageProvider extends LanguageProvider {
 
         this.add(ModBlocks.CITRINE_BLOCK.get(), "Citrine block");
 
-        this.add(ModBlocks.SYSTEM_CONTROLLER_BLOCK.get(), "System controller");
+        this.add(ModBlocks.LINK_CABLE_BLOCK.get(), "Link cable");
         this.add(ModBlocks.IMPORT_BUS_BLOCK.get(), "Import bus");
         this.add(ModBlocks.EXPORT_BUS_BLOCK.get(), "Export bus");
 

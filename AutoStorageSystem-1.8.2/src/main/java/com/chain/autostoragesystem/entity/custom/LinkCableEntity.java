@@ -13,15 +13,15 @@ import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Блок, управляющий системой
+ * Соединяющий кабель
  */
-public class SystemControllerEntity extends BaseBlockEntity {
+public class LinkCableEntity extends BaseBlockEntity {
 
     private final IConnection connection = new Connection(this);
 
 
-    public SystemControllerEntity(BlockPos pWorldPosition, BlockState pBlockState) {
-        super(ModBlockEntities.SYSTEM_CONTROLLER_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
+    public LinkCableEntity(BlockPos pWorldPosition, BlockState pBlockState) {
+        super(ModBlockEntities.LINK_CABLE_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
 
         registerCapability(ModCapabilities.CONNECTION_CAPABILITY, LazyOptional.of(() -> connection));
     }
@@ -42,10 +42,10 @@ public class SystemControllerEntity extends BaseBlockEntity {
         super.load(nbt);
     }
 
-    public static void clientTick(Level level, BlockPos pos, BlockState state, SystemControllerEntity blockEntity) {
+    public static void clientTick(Level level, BlockPos pos, BlockState state, LinkCableEntity blockEntity) {
     }
 
-    public static void serverTick(Level level, BlockPos pos, BlockState state, SystemControllerEntity blockEntity) {
+    public static void serverTick(Level level, BlockPos pos, BlockState state, LinkCableEntity blockEntity) {
         Levels.requireServerSide(level);
     }
 

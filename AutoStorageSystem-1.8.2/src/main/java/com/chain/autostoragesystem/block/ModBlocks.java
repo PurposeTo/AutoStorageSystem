@@ -3,7 +3,7 @@ package com.chain.autostoragesystem.block;
 import com.chain.autostoragesystem.ModMain;
 import com.chain.autostoragesystem.block.custom.ExportBusBlock;
 import com.chain.autostoragesystem.block.custom.ImportBusBlock;
-import com.chain.autostoragesystem.block.custom.SystemController;
+import com.chain.autostoragesystem.block.custom.LinkCable;
 import com.chain.autostoragesystem.item.ModItems;
 import com.chain.autostoragesystem.itemGroup.ModCreativeModeTab;
 import net.minecraft.world.item.BlockItem;
@@ -29,9 +29,9 @@ public class ModBlocks {
             () -> new Block(getBlockProp()),
             getItemProp(ModCreativeModeTab.MODE_TAB));
 
-    public static final RegistryObject<Block> SYSTEM_CONTROLLER_BLOCK = registerBlock(
-            "system_controller_block",
-            () -> new SystemController(getBlockProp()),
+    public static final RegistryObject<Block> LINK_CABLE_BLOCK = registerBlock(
+            "link_cable_block",
+            () -> new LinkCable(getBlockProp()),
             getItemProp(ModCreativeModeTab.MODE_TAB));
 
     public static final RegistryObject<Block> IMPORT_BUS_BLOCK = registerBlock(

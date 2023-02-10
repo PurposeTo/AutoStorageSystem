@@ -57,12 +57,14 @@ public class ExportBusEntity extends BaseBlockEntity implements MenuProvider {
 
     @Override
     protected void saveAdditional(@NotNull CompoundTag tag) {
+        tag.put("filters", filters.createTag());
         super.saveAdditional(tag);
     }
 
     @Override
     public void load(CompoundTag nbt) {
         super.load(nbt);
+        filters.fromTag(nbt.getList("filters", CompoundTag.TAG_COMPOUND));
     }
 
     public static void clientTick(Level level, BlockPos pos, BlockState state, ExportBusEntity blockEntity) {
