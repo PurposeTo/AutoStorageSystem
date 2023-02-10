@@ -1,39 +1,46 @@
 package com.chain.autostoragesystem.entity.custom;
 
 import com.chain.autostoragesystem.ModCapabilities;
+import com.chain.autostoragesystem.api.bus.filters.ItemTypeFiltersFactory;
 import com.chain.autostoragesystem.api.bus.import_bus.ImportBus;
+import com.chain.autostoragesystem.api.connection.Connection;
+import com.chain.autostoragesystem.api.connection.IConnection;
+import com.chain.autostoragesystem.api.wrappers.ItemHandlerGroup;
+import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
-import com.chain.autostoragesystem.utils.minecraft.Levels;
+import com.chain.autostoragesystem.utils.minecraft.TickerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ImportBusEntity extends BaseBlockEntity {
+public class ImportBusEntity extends BaseBlockEntity implements TickerUtil.TickableServer {
+    private final IConnection connection = new Connection(this);
+    private final SimpleContainer filters = new SimpleContainer(27);
 
     private final ImportBus importBus;
 
-    // Список хранит строго существующие IItemHandler-ы
-    List<IItemHandler> connectedInventories = new ArrayList<>();
+    private final ItemHandlerGroup itemsReceiver = new ItemHandlerGroup();
 
 
     public ImportBusEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModBlockEntities.IMPORT_BUS_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
 
-        importBus = new ImportBus(pWorldPosition);
-        registerCapability(ModCapabilities.IMPORT_BUS_CAPABILITY, LazyOptional.of(() -> importBus));
+        importBus = new ImportBus(itemsReceiver, ItemTypeFiltersFactory.getFromContainer(filters));
+        registerCapability(ModCapabilities.CONNECTION, () -> connection);
+        registerCapability(ModCapabilities.CONTAINER, () -> filters);
+        registerCapability(ModCapabilities.IMPORT_BUS, () -> importBus);
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
-        registerCapability(ModCapabilities.IMPORT_BUS_CAPABILITY, LazyOptional.of(() -> importBus));
+        registerCapability(ModCapabilities.CONNECTION, () -> connection);
+        registerCapability(ModCapabilities.CONTAINER, () -> filters);
+        registerCapability(ModCapabilities.IMPORT_BUS, () -> importBus);
     }
 
     @Override
@@ -46,19 +53,17 @@ public class ImportBusEntity extends BaseBlockEntity {
         super.load(nbt);
     }
 
-    public static void clientTick(Level level, BlockPos pos, BlockState state, ImportBusEntity blockEntity) {
+    @Override
+    public void tickServer() {
+        List<IItemHandlerWrapper> storageInventories = connection.getAllConnections()
+                .stream()
+                .flatMap(connection -> connection.getNeighboursItemHandlers().stream())
+                .toList();
+        itemsReceiver.resetItemHandlers(storageInventories);
+
+        List<IItemHandlerWrapper> connectedInventories = connection.getNeighboursItemHandlers();
+        importBus.updateInventories(connectedInventories);
+
+        importBus.tick();
     }
-
-    public static void serverTick(Level level, BlockPos pos, BlockState state, ImportBusEntity blockEntity) {
-        Levels.requireServerSide(level);
-
-//        blockEntity.connectedInventories = NeighborsApi.getItemHandlers(level, pos);
-//        blockEntity.updateInventories();
-//        blockEntity.importBus.tick();
-    }
-
-    private void updateInventories() {
-        importBus.setConnectedInventories(this.connectedInventories);
-    }
-
 }

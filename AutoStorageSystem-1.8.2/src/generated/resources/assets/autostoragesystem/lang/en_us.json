@@ -3,6 +3,7 @@
   "block.autostoragesystem.export_bus_block": "Export bus",
   "block.autostoragesystem.import_bus_block": "Import bus",
   "block.autostoragesystem.link_cable_block": "Link cable",
+  "block.autostoragesystem.storage_bus_block": "Storage bus",
   "item.autostoragesystem.citrine": "Citrine",
   "item.autostoragesystem.debug_item.no_valuables": "No blocks found!",
   "item.autostoragesystem.raw_citrine": "Raw citrine"

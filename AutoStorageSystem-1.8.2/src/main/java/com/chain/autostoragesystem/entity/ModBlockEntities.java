@@ -5,6 +5,7 @@ import com.chain.autostoragesystem.block.ModBlocks;
 import com.chain.autostoragesystem.entity.custom.ExportBusEntity;
 import com.chain.autostoragesystem.entity.custom.ImportBusEntity;
 import com.chain.autostoragesystem.entity.custom.LinkCableEntity;
+import com.chain.autostoragesystem.entity.custom.StorageBusEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -21,6 +22,7 @@ public class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<LinkCableEntity>> LINK_CABLE_BLOCK_ENTITY = registerBlockEntity("link_cable_block_entity", LinkCableEntity::new, ModBlocks.LINK_CABLE_BLOCK);
     public static final RegistryObject<BlockEntityType<ImportBusEntity>> IMPORT_BUS_BLOCK_ENTITY = registerBlockEntity("import_bus_block_entity", ImportBusEntity::new, ModBlocks.IMPORT_BUS_BLOCK);
     public static final RegistryObject<BlockEntityType<ExportBusEntity>> EXPORT_BUS_BLOCK_ENTITY = registerBlockEntity("export_bus_block_entity", ExportBusEntity::new, ModBlocks.EXPORT_BUS_BLOCK);
+    public static final RegistryObject<BlockEntityType<StorageBusEntity>>STORAGE_BUS_BLOCK_ENTITY = registerBlockEntity("storage_bus_block_entity", StorageBusEntity::new, ModBlocks.STORAGE_BUS_BLOCK);
 
 
     public static void registerAll(IEventBus eventBus) {

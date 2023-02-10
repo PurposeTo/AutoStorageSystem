@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.util.NonNullSupplier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -20,8 +21,8 @@ public class BaseBlockEntity extends BlockEntity {
 
     private final Map<Capability<?>, LazyOptional<?>> capabilities = new HashMap<>();
 
-    protected <T> void registerCapability(Capability<T> token, LazyOptional<T> capability) {
-        capabilities.put(token, capability);
+    protected <T> void registerCapability(Capability<T> token, NonNullSupplier<T> instanceSupplier) {
+        capabilities.put(token, LazyOptional.of(instanceSupplier));
     }
 
     @NotNull

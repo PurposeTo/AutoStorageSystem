@@ -1,6 +1,7 @@
 package com.chain.autostoragesystem.api.bus.export_bus;
 
 import com.chain.autostoragesystem.api.ProgressManager;
+import com.chain.autostoragesystem.api.bus.IConfigurable;
 import com.chain.autostoragesystem.api.bus.filters.IItemTypeFilters;
 import com.chain.autostoragesystem.api.storage_system.Config;
 import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerComparer;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-public class ExportInventory implements IItemHandlerComparer {
+public class ExportInventory implements IItemHandlerComparer, IConfigurable {
 
     @Nonnull
     private final IItemsReceiver inventory;
@@ -44,6 +45,7 @@ public class ExportInventory implements IItemHandlerComparer {
         progressManager.tick();
     }
 
+    @Override
     public void setConfig(@Nonnull Config config) {
         this.config = config;
         progressManager.setDelay(config.getPauseIntervalTicks());

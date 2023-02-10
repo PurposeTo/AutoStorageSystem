@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "autostoragesystem:block/storage_bus_block"
+    }
+  }
+}

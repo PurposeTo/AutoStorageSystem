@@ -26,6 +26,7 @@ public class ModBlocksStateProvider extends BlockStateProvider {
         simpleBlock(ModBlocks.LINK_CABLE_BLOCK.get());
         simpleBlock(ModBlocks.IMPORT_BUS_BLOCK.get());
         simpleBlock(ModBlocks.EXPORT_BUS_BLOCK.get());
+        simpleBlock(ModBlocks.STORAGE_BUS_BLOCK.get());
     }
 
     public ModelFile flowerPotCross(String name) {

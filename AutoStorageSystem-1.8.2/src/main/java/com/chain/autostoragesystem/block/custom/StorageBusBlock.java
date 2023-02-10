@@ -1,6 +1,6 @@
 package com.chain.autostoragesystem.block.custom;
 
-import com.chain.autostoragesystem.entity.custom.ImportBusEntity;
+import com.chain.autostoragesystem.entity.custom.StorageBusEntity;
 import com.chain.autostoragesystem.utils.minecraft.TickerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -14,12 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-/**
- * Шина импорта предметов В систему
- */
-public class ImportBusBlock extends BaseEntityBlock {
+public class StorageBusBlock extends BaseEntityBlock {
 
-    public ImportBusBlock(Properties properties) {
+    public StorageBusBlock(Properties properties) {
         super(properties);
     }
 
@@ -31,13 +28,14 @@ public class ImportBusBlock extends BaseEntityBlock {
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return TickerUtil.createTickerServer(level);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType) {
+        return TickerUtil.createTickerServer(pLevel);
     }
+
 
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
-        return new ImportBusEntity(pPos, pState);
+        return new StorageBusEntity(pPos, pState);
     }
 }

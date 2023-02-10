@@ -4,6 +4,7 @@ import com.chain.autostoragesystem.ModMain;
 import com.chain.autostoragesystem.block.custom.ExportBusBlock;
 import com.chain.autostoragesystem.block.custom.ImportBusBlock;
 import com.chain.autostoragesystem.block.custom.LinkCable;
+import com.chain.autostoragesystem.block.custom.StorageBusBlock;
 import com.chain.autostoragesystem.item.ModItems;
 import com.chain.autostoragesystem.itemGroup.ModCreativeModeTab;
 import net.minecraft.world.item.BlockItem;
@@ -29,6 +30,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> LINK_CABLE_BLOCK = blockWithItem("link_cable_block", () -> new LinkCable(getBlockProp()));
     public static final RegistryObject<Block> IMPORT_BUS_BLOCK = blockWithItem("import_bus_block", () -> new ImportBusBlock(getBlockProp()));
     public static final RegistryObject<Block> EXPORT_BUS_BLOCK = blockWithItem("export_bus_block", () -> new ExportBusBlock(getBlockProp()));
+    public static final RegistryObject<Block> STORAGE_BUS_BLOCK = blockWithItem("storage_bus_block", () -> new StorageBusBlock(getBlockProp()));
 
 
     public static void registerAll(IEventBus eventBus) {

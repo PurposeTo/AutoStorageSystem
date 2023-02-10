@@ -9,7 +9,6 @@ import com.chain.autostoragesystem.api.wrappers.ItemHandlerGroup;
 import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.screen.custom.ExportBusMenu;
-import com.chain.autostoragesystem.utils.minecraft.Levels;
 import com.chain.autostoragesystem.utils.minecraft.TickerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -21,19 +20,16 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.TickableServer, MenuProvider {
+    private final IConnection connection = new Connection(this);
     private final SimpleContainer filters = new SimpleContainer(27);
 
     private final ExportBus exportBus;
-
-    private final IConnection connection = new Connection(this);
 
     private final ItemHandlerGroup itemsTransmitter = new ItemHandlerGroup();
 
@@ -41,18 +37,18 @@ public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.Ticka
     public ExportBusEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModBlockEntities.EXPORT_BUS_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
 
-        exportBus = new ExportBus(new ArrayList<>(), itemsTransmitter, ItemTypeFiltersFactory.getFromContainer(filters));
-        registerCapability(ModCapabilities.CONNECTION_CAPABILITY, LazyOptional.of(() -> connection));
-        registerCapability(ModCapabilities.CONTAINER_CAPABILITY, LazyOptional.of(() -> filters));
-        registerCapability(ModCapabilities.EXPORT_BUS_CAPABILITY, LazyOptional.of(() -> exportBus));
+        exportBus = new ExportBus(itemsTransmitter, ItemTypeFiltersFactory.getFromContainer(filters));
+        registerCapability(ModCapabilities.CONNECTION, () -> connection);
+        registerCapability(ModCapabilities.CONTAINER, () -> filters);
+        registerCapability(ModCapabilities.EXPORT_BUS, () -> exportBus);
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
-        registerCapability(ModCapabilities.CONNECTION_CAPABILITY, LazyOptional.of(() -> connection));
-        registerCapability(ModCapabilities.CONTAINER_CAPABILITY, LazyOptional.of(() -> filters));
-        registerCapability(ModCapabilities.EXPORT_BUS_CAPABILITY, LazyOptional.of(() -> exportBus));
+        registerCapability(ModCapabilities.CONNECTION, () -> connection);
+        registerCapability(ModCapabilities.CONTAINER, () -> filters);
+        registerCapability(ModCapabilities.EXPORT_BUS, () -> exportBus);
     }
 
     @Override
@@ -69,11 +65,10 @@ public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.Ticka
 
     @Override
     public void tickServer() {
-        Levels.requireServerSide(level);
-
         List<IItemHandlerWrapper> storageInventories = connection.getAllConnections()
                 .stream()
-                .flatMap(connection -> connection.getNeighboursItemHandlers().stream())
+                .flatMap(connection -> connection.getCapability(ModCapabilities.STORAGE_BUS).resolve().stream())
+                .flatMap(storageBus -> storageBus.getNeighboursItemHandlers().stream())
                 .toList();
         itemsTransmitter.resetItemHandlers(storageInventories);
 

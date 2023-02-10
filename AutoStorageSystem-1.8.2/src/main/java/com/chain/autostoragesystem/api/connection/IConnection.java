@@ -90,7 +90,7 @@ public interface IConnection extends ICapabilityProvider {
      */
     @Nonnull
     default Set<IConnection> getNeighborConnections() {
-        return new HashSet<>(getNeighboursCapabilities(ModCapabilities.CONNECTION_CAPABILITY));
+        return new HashSet<>(getNeighboursCapabilities(ModCapabilities.CONNECTION));
     }
 
     @Nonnull

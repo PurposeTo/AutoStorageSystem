@@ -22,6 +22,7 @@ public class ModLanguageProvider extends LanguageProvider {
         this.add(ModBlocks.LINK_CABLE_BLOCK.get(), "Link cable");
         this.add(ModBlocks.IMPORT_BUS_BLOCK.get(), "Import bus");
         this.add(ModBlocks.EXPORT_BUS_BLOCK.get(), "Export bus");
+        this.add(ModBlocks.STORAGE_BUS_BLOCK.get(), "Storage bus");
 
         this.add("item." + ModMain.MOD_ID + ".debug_item.no_valuables", "No blocks found!");
     }

@@ -1,30 +1,20 @@
-package com.chain.autostoragesystem.api.connection;
+package com.chain.autostoragesystem.api.bus.storage_bus;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class Connection implements IConnection {
+public class StorageBus implements IStorageBus {
 
     @Nonnull
     private final BlockEntity blockEntity;
 
-    public Connection(@Nonnull BlockEntity blockEntity) {
+    public StorageBus(@Nonnull BlockEntity blockEntity) {
         this.blockEntity = blockEntity;
-    }
-
-    @NotNull
-    @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        return blockEntity.getCapability(cap, side);
     }
 
     @Override

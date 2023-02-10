@@ -1,26 +1,28 @@
 package com.chain.autostoragesystem.api.bus.import_bus;
 
 import com.chain.autostoragesystem.api.bus.AbstractBus;
-import com.chain.autostoragesystem.api.wrappers.items_receiver.EmptyItemsReceiver;
+import com.chain.autostoragesystem.api.bus.IConfigurable;
+import com.chain.autostoragesystem.api.bus.filters.IItemTypeFilters;
+import com.chain.autostoragesystem.api.storage_system.Config;
+import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
-import net.minecraft.core.BlockPos;
-import net.minecraftforge.items.IItemHandler;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
-public class ImportBus extends AbstractBus implements IImportBus {
+public class ImportBus extends AbstractBus<ImportInventory> implements IImportBus, IConfigurable {
 
     @Nonnull
-    private List<ImportInventory> inventories = new ArrayList<>();
+    private final IItemsReceiver itemsReceiver;
 
     @Nonnull
-    private IItemsReceiver itemsReceiver = new EmptyItemsReceiver();
+    private final IItemTypeFilters filters;
 
-    public ImportBus(@Nonnull BlockPos pos) {
-        super(pos);
+    public ImportBus(@Nonnull IItemsReceiver itemsReceiver,
+                     @Nonnull IItemTypeFilters filters) {
+
+        this.itemsReceiver = itemsReceiver;
+        this.filters = filters;
     }
 
     @Override
@@ -31,20 +33,7 @@ public class ImportBus extends AbstractBus implements IImportBus {
     }
 
     @Override
-    public void setItemsReceiver(@Nonnull IItemsReceiver itemsReceiver) {
-        this.itemsReceiver = itemsReceiver;
-        onStorageControllerUpdated(this.itemsReceiver);
+    protected ImportInventory createNewT(@NotNull IItemHandlerWrapper inventory, @NotNull Config config) {
+        return new ImportInventory(inventory, itemsReceiver, filters, config);
     }
-
-    @Override
-    protected void onInventoriesUpdated(@Nonnull List<IItemHandler> connectedInventories) {
-        this.inventories = connectedInventories.stream()
-                .map(iItemHandler -> new ImportInventory(iItemHandler, itemsReceiver))
-                .collect(Collectors.toList());
-    }
-
-    protected void onStorageControllerUpdated(@Nonnull IItemsReceiver storageController) {
-        this.inventories.forEach(importInventory -> importInventory.setItemsReceiver(storageController));
-    }
-
 }
