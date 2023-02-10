@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExportBusEntity extends BaseBlockEntity implements MenuProvider {
-    private final SimpleContainer filters = new SimpleContainer(4);
+    private final SimpleContainer filters = new SimpleContainer(27);
 
     private final ExportBus exportBus;
 

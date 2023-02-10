@@ -29,9 +29,7 @@ public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerM
         this.blockEntity = (T) blockEntity;
         this.level = inv.player.level;
 
-        // порядок добавления важен!
-        addPlayerHotbar(inv);
-        addPlayerInventory(inv);
+        addPlayerSlots(inv);
     }
 
     protected abstract Block getRegistryBlock();
@@ -90,6 +88,12 @@ public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerM
     @Override
     public boolean stillValid(Player pPlayer) {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()), pPlayer, getRegistryBlock());
+    }
+
+    protected void addPlayerSlots(Inventory playerInventory) {
+        // порядок добавления важен!
+        addPlayerHotbar(playerInventory);
+        addPlayerInventory(playerInventory);
     }
 
     private void addPlayerInventory(Inventory playerInventory) {
