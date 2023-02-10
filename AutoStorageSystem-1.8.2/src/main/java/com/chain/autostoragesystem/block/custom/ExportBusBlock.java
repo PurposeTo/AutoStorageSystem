@@ -1,7 +1,7 @@
 package com.chain.autostoragesystem.block.custom;
 
-import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.entity.custom.ExportBusEntity;
+import com.chain.autostoragesystem.utils.minecraft.TickerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -38,10 +38,7 @@ public class ExportBusBlock extends BaseEntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState pState, BlockEntityType<T> pBlockEntityType) {
-        return createTickerHelper(
-                pBlockEntityType,
-                ModBlockEntities.EXPORT_BUS_BLOCK_ENTITY.get(),
-                level.isClientSide() ? ExportBusEntity::clientTick : ExportBusEntity::serverTick);
+        return TickerUtil.createTickerServer(level);
     }
 
     @Nullable

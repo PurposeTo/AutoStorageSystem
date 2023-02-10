@@ -20,7 +20,7 @@ public class ModBlockEntities {
 
     public static final RegistryObject<BlockEntityType<LinkCableEntity>> LINK_CABLE_BLOCK_ENTITY = registerBlockEntity("link_cable_block_entity", LinkCableEntity::new, ModBlocks.LINK_CABLE_BLOCK);
     public static final RegistryObject<BlockEntityType<ImportBusEntity>> IMPORT_BUS_BLOCK_ENTITY = registerBlockEntity("import_bus_block_entity", ImportBusEntity::new, ModBlocks.IMPORT_BUS_BLOCK);
-    public static final RegistryObject<BlockEntityType<ExportBusEntity>> EXPORT_BUS_BLOCK_ENTITY = registerBlockEntity("export_bus_block_entity", ExportBusEntity::new);
+    public static final RegistryObject<BlockEntityType<ExportBusEntity>> EXPORT_BUS_BLOCK_ENTITY = registerBlockEntity("export_bus_block_entity", ExportBusEntity::new, ModBlocks.EXPORT_BUS_BLOCK);
 
 
     public static void registerAll(IEventBus eventBus) {

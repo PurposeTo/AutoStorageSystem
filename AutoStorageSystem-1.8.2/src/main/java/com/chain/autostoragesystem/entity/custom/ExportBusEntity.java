@@ -10,6 +10,7 @@ import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.screen.custom.ExportBusMenu;
 import com.chain.autostoragesystem.utils.minecraft.Levels;
+import com.chain.autostoragesystem.utils.minecraft.TickerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,7 +20,6 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExportBusEntity extends BaseBlockEntity implements MenuProvider {
+public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.TickableServer, MenuProvider {
     private final SimpleContainer filters = new SimpleContainer(27);
 
     private final ExportBus exportBus;
@@ -67,22 +67,20 @@ public class ExportBusEntity extends BaseBlockEntity implements MenuProvider {
         filters.fromTag(nbt.getList("filters", CompoundTag.TAG_COMPOUND));
     }
 
-    public static void clientTick(Level level, BlockPos pos, BlockState state, ExportBusEntity blockEntity) {
-    }
-
-    public static void serverTick(Level level, BlockPos pos, BlockState state, ExportBusEntity blockEntity) {
+    @Override
+    public void tickServer() {
         Levels.requireServerSide(level);
 
-        List<IItemHandlerWrapper> storageInventories = blockEntity.connection.getAllConnections()
+        List<IItemHandlerWrapper> storageInventories = connection.getAllConnections()
                 .stream()
                 .flatMap(connection -> connection.getNeighboursItemHandlers().stream())
                 .toList();
-        blockEntity.itemsTransmitter.resetItemHandlers(storageInventories);
+        itemsTransmitter.resetItemHandlers(storageInventories);
 
-        List<IItemHandlerWrapper> connectedInventories = blockEntity.connection.getNeighboursItemHandlers();
-        blockEntity.exportBus.updateInventories(connectedInventories);
+        List<IItemHandlerWrapper> connectedInventories = connection.getNeighboursItemHandlers();
+        exportBus.updateInventories(connectedInventories);
 
-        blockEntity.exportBus.tick();
+        exportBus.tick();
     }
 
     @NotNull
