@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class ModCreativeModeTab {
 
-    public static final CreativeModeTab MODE_TAB = new CreativeModeTab("Auto storage system") {
+    public static final CreativeModeTab MOD_TAB = new CreativeModeTab("Auto storage system") {
         @Override
         public ItemStack makeIcon() {
             return new ItemStack(ModItems.CITRINE.get());

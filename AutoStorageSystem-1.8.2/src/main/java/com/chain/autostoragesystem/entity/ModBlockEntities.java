@@ -13,37 +13,24 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.function.Supplier;
+import java.util.Arrays;
 
 public class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, ModMain.MOD_ID);
 
-    public static final RegistryObject<BlockEntityType<LinkCableEntity>> LINK_CABLE_BLOCK_ENTITY = registerBlockEntity(
-            "link_cable_block_entity",
-            () -> BlockEntityType.Builder.of(LinkCableEntity::new, ModBlocks.LINK_CABLE_BLOCK.get()).build(null));
-
-    public static final RegistryObject<BlockEntityType<ImportBusEntity>> IMPORT_BUS_BLOCK_ENTITY = registerBlockEntity(
-            "import_bus_block_entity",
-            () -> BlockEntityType.Builder.of(ImportBusEntity::new, ModBlocks.IMPORT_BUS_BLOCK.get()).build(null));
-
-    public static final RegistryObject<BlockEntityType<ExportBusEntity>> EXPORT_BUS_BLOCK_ENTITY = registerBlockEntity(
-            "export_bus_block_entity",
-            () -> BlockEntityType.Builder.of(ExportBusEntity::new, ModBlocks.EXPORT_BUS_BLOCK.get()).build(null));
+    public static final RegistryObject<BlockEntityType<LinkCableEntity>> LINK_CABLE_BLOCK_ENTITY = registerBlockEntity("link_cable_block_entity", LinkCableEntity::new, ModBlocks.LINK_CABLE_BLOCK);
+    public static final RegistryObject<BlockEntityType<ImportBusEntity>> IMPORT_BUS_BLOCK_ENTITY = registerBlockEntity("import_bus_block_entity", ImportBusEntity::new, ModBlocks.IMPORT_BUS_BLOCK);
+    public static final RegistryObject<BlockEntityType<ExportBusEntity>> EXPORT_BUS_BLOCK_ENTITY = registerBlockEntity("export_bus_block_entity", ExportBusEntity::new);
 
 
     public static void registerAll(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }
 
-    // why this don't work? Minecraft starting exception
-    public static <T extends BlockEntity> RegistryObject<BlockEntityType<T>> registerBlockEntity(String name, BlockEntityType.BlockEntitySupplier<T> pFactory, Block... pValidBlocks) {
-        return registerBlockEntity(
-                name,
-                () -> BlockEntityType.Builder.of(pFactory, pValidBlocks).build(null));
-    }
-
-    private static <T extends BlockEntity> RegistryObject<BlockEntityType<T>> registerBlockEntity(String name,
-                                                                                                  Supplier<? extends BlockEntityType<T>> sup) {
-        return BLOCK_ENTITIES.register(name, sup);
+    @SafeVarargs
+    private static <BE extends BlockEntity> RegistryObject<BlockEntityType<BE>> registerBlockEntity(String name, BlockEntityType.BlockEntitySupplier<? extends BE> create, RegistryObject<? extends Block>... blocks) {
+        return BLOCK_ENTITIES.register(name, () -> {
+            return BlockEntityType.Builder.<BE>of(create, Arrays.stream(blocks).map(RegistryObject::get).toArray(Block[]::new)).build(null);
+        });
     }
 }

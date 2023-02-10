@@ -18,16 +18,15 @@ public class ModItems {
 
     public static final RegistryObject<Item> DEBUG_ITEM = registerItem(
             "debug_item",
-            () -> new DebugItem(ModCreativeModeTab.MODE_TAB));
+            () -> new DebugItem(ModCreativeModeTab.MOD_TAB));
 
     public static final RegistryObject<Item> CITRINE = registerItem(
             "citrine",
-            () -> new DefaultItem(ModCreativeModeTab.MODE_TAB));
+            () -> new DefaultItem(ModCreativeModeTab.MOD_TAB));
 
     public static final RegistryObject<Item> RAW_CITRINE = registerItem(
             "raw_citrine",
-            () -> new DefaultItem(ModCreativeModeTab.MODE_TAB));
-
+            () -> new DefaultItem(ModCreativeModeTab.MOD_TAB));
 
     public static void registerAll(IEventBus eventBus) {
         ITEMS.register(eventBus);

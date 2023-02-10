@@ -12,19 +12,19 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class ModMenuTypes {
-    private static final DeferredRegister<MenuType<?>> MENUS =
-            DeferredRegister.create(ForgeRegistries.CONTAINERS, ModMain.MOD_ID);
+    private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(ForgeRegistries.CONTAINERS, ModMain.MOD_ID);
 
     public static final RegistryObject<MenuType<ExportBusMenu>> EXPORT_BUS_MENU =
-            registerMenuType(ExportBusMenu::new, "export_bus_menu");
+            registerMenuType("export_bus_menu", ExportBusMenu::new);
 
 
-    private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(IContainerFactory<T> factory,
-                                                                                                  String name) {
-        return MENUS.register(name, () -> IForgeMenuType.create(factory));
+    private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(
+            String name,
+            IContainerFactory<T> factory) {
+        return MENU_TYPES.register(name, () -> IForgeMenuType.create(factory));
     }
 
     public static void registerAll(IEventBus eventBus) {
-        MENUS.register(eventBus);
+        MENU_TYPES.register(eventBus);
     }
 }
