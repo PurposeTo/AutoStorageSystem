@@ -36,10 +36,7 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
         this.filters = entity.getCapability(ModCapabilities.CONTAINER_CAPABILITY).orElseThrow((IllegalArgumentException::new));
         filters.startOpen(inv.player);
 
-        this.addSlot(new PhantomSlot(filters, 0, 8, 18));
-        this.addSlot(new PhantomSlot(filters, 1, 26, 18));
-        this.addSlot(new PhantomSlot(filters, 2, 44, 18));
-        this.addSlot(new PhantomSlot(filters, 3, 62, 18));
+        addSlots(filters, 9, 3, 8, 18, PhantomSlot::new);
     }
 
     @Override

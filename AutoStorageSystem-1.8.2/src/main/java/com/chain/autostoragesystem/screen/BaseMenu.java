@@ -1,6 +1,8 @@
 package com.chain.autostoragesystem.screen;
 
+import com.chain.autostoragesystem.utils.minecraft.SlotSupplier;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -27,8 +29,9 @@ public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerM
         this.blockEntity = (T) blockEntity;
         this.level = inv.player.level;
 
-        addPlayerInventory(inv);
+        // порядок добавления важен!
         addPlayerHotbar(inv);
+        addPlayerInventory(inv);
     }
 
     protected abstract Block getRegistryBlock();
@@ -90,16 +93,44 @@ public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerM
     }
 
     private void addPlayerInventory(Inventory playerInventory) {
-        for (int i = 0; i < 3; ++i) {
-            for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + i * 9 + 9, 8 + l * 18, 86 + i * 18));
-            }
-        }
+        int slotsInLine = 9;
+        int lines = 3;
+
+        final int horizontalOffset = 8;
+        final int verticalOffset = 86;
+
+        addSlots(playerInventory, slotsInLine, lines, horizontalOffset, verticalOffset, Slot::new);
     }
 
     private void addPlayerHotbar(Inventory playerInventory) {
-        for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 144));
+        addSlots(playerInventory, 9, 1, 8, 144, Slot::new);
+    }
+
+    protected <T extends Slot> void addSlots(Container container,
+                                             int slotsInLine,
+                                             int lines,
+                                             int horizontalOffset,
+                                             int verticalOffset,
+                                             SlotSupplier<T> slotSupplier) {
+        final int firstSlotIndex = this.slots.stream()
+                .filter(slot -> slot.container == container)
+                .toList()
+                .size();
+
+        final int slotHeight = 16;
+        final int slotWidth = 16;
+
+        final int horizontalSpacing = 2;
+        final int verticalSpacing = 2;
+
+        for (int i = 0; i < lines; ++i) {
+            for (int l = 0; l < slotsInLine; ++l) {
+                int posX = horizontalOffset + (l * (slotWidth + horizontalSpacing));
+                int posY = verticalOffset + (i * (slotHeight + verticalSpacing));
+                int slotIndex = l + i * slotsInLine + firstSlotIndex;
+                T slot = slotSupplier.create(container, slotIndex, posX, posY);
+                this.addSlot(slot);
+            }
         }
     }
 }
