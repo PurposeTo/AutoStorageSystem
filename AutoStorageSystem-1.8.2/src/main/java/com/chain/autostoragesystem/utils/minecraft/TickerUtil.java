@@ -20,15 +20,26 @@ public class TickerUtil {
     }
 
     public static <T extends BlockEntity> BlockEntityTicker<T> createTickers(Level world) {
-        if (world.isClientSide) return (a, b, c, tile) -> ((TickableClient) tile).tickClient();
-        else return (a, b, c, tile) -> ((TickableServer) tile).tickServer();
+        if (world.isClientSide) {
+            return (a, b, c, tile) -> {
+                if (tile instanceof TickableClient tickableClient) {
+                    tickableClient.tickClient();
+                }
+            };
+        } else {
+            return (a, b, c, tile) -> {
+                if (tile instanceof TickableServer tickableServer) {
+                    tickableServer.tickServer();
+                }
+            };
+        }
     }
 
-    public static interface TickableClient {
-        public void tickClient();
+    public interface TickableClient {
+        void tickClient();
     }
 
-    public static interface TickableServer {
-        public void tickServer();
+    public interface TickableServer {
+        void tickServer();
     }
 }

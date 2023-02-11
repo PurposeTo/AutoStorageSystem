@@ -4,10 +4,8 @@ import com.chain.autostoragesystem.ModCapabilities;
 import com.chain.autostoragesystem.api.connection.Connection;
 import com.chain.autostoragesystem.api.connection.IConnection;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
-import com.chain.autostoragesystem.utils.minecraft.Levels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,13 +38,5 @@ public class LinkCableEntity extends BaseBlockEntity {
     public void load(CompoundTag nbt) {
         super.load(nbt);
     }
-
-    public static void clientTick(Level level, BlockPos pos, BlockState state, LinkCableEntity blockEntity) {
-    }
-
-    public static void serverTick(Level level, BlockPos pos, BlockState state, LinkCableEntity blockEntity) {
-        Levels.requireServerSide(level);
-    }
-
 
 }
