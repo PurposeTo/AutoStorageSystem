@@ -1,12 +1,12 @@
 package com.chain.autostoragesystem.api.wrappers.item_handler;
 
-import com.chain.autostoragesystem.api.wrappers.ItemStackWrapper;
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.IStackInSlot;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.StackInSlot;
 import lombok.Getter;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -68,53 +68,10 @@ public class ItemHandlerWrapper implements IItemHandlerWrapper {
      * It may be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
      * The returned ItemStack can be safely modified after.
      */
-    @Override
-    public @NotNull ItemStack insertItem(final @NotNull ItemStack itemStack, boolean simulate) {
-        ItemStack toInsert = itemStack.copy();
-
-        if (toInsert.isEmpty()) {
-            return ItemStack.EMPTY;
-        }
-
-        if (!toInsert.isStackable()) {
-            return insertUnstackableItem(toInsert, simulate);
-        }
-
-        int slots = getSlots();
-        for (int slot = 0; slot < slots; slot++) {
-            ItemStack stackInSlot = getStackInSlot(slot);
-            ItemStackWrapper stackInSlotWrap = new ItemStackWrapper(stackInSlot);
-
-            if (stackInSlotWrap.canAccept(toInsert)) {
-                toInsert = insertItem(slot, toInsert, simulate);
-                if (toInsert.isEmpty()) {
-                    break;
-                }
-
-            }
-        }
-
-        return toInsert;
-    }
-
-    /**
-     * @param itemStack
-     * @return Returns:
-     * The remaining ItemStack that was not inserted
-     * (if the entire stack is accepted, then return an empty ItemStack).
-     * It may be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
-     * The returned ItemStack can be safely modified after.
-     */
     @NotNull
-    private ItemStack insertUnstackableItem(ItemStack itemStack, boolean simulate) {
-        if (itemStack.isStackable()) {
-            throw new IllegalArgumentException("This method is only for unstackable items");
-        }
-
-        int freeSlot = getFreeSlot();
-        if (freeSlot != -1) {
-            return insertItem(freeSlot, itemStack, simulate);
-        } else return itemStack;
+    @Override
+    public ItemStack insertItem(final @NotNull ItemStack itemStack, boolean simulate) {
+        return ItemHandlerHelper.insertItemStacked(this.itemHandler, itemStack, simulate);
     }
 
     /**
