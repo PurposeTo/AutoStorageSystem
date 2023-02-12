@@ -6,6 +6,7 @@ import com.chain.autostoragesystem.api.bus.storage_bus.StorageBus;
 import com.chain.autostoragesystem.api.connection.Connection;
 import com.chain.autostoragesystem.api.connection.IConnection;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
+import com.chain.autostoragesystem.entity.custom.base.BaseBlockEntity;
 import com.chain.autostoragesystem.utils.minecraft.TickerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -19,11 +20,13 @@ public class StorageBusEntity extends BaseBlockEntity implements TickerUtil.Tick
 
     private final IConnection connection = new Connection(this);
 
-    private final IStorageBus storageBus = new StorageBus(this);
+    private final IStorageBus storageBus;
 
 
     public StorageBusEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModBlockEntities.STORAGE_BUS_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
+
+        this.storageBus = new StorageBus(this, connection);
 
         registerCapability(ModCapabilities.CONNECTION, () -> connection);
         registerCapability(ModCapabilities.STORAGE_BUS, () -> storageBus);

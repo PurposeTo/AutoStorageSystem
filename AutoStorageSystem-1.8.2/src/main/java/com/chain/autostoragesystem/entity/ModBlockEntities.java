@@ -2,10 +2,7 @@ package com.chain.autostoragesystem.entity;
 
 import com.chain.autostoragesystem.ModMain;
 import com.chain.autostoragesystem.block.ModBlocks;
-import com.chain.autostoragesystem.entity.custom.ExportBusEntity;
-import com.chain.autostoragesystem.entity.custom.ImportBusEntity;
-import com.chain.autostoragesystem.entity.custom.LinkCableEntity;
-import com.chain.autostoragesystem.entity.custom.StorageBusEntity;
+import com.chain.autostoragesystem.entity.custom.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -23,6 +20,7 @@ public class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<ImportBusEntity>> IMPORT_BUS_BLOCK_ENTITY = registerBlockEntity("import_bus_block_entity", ImportBusEntity::new, ModBlocks.IMPORT_BUS_BLOCK);
     public static final RegistryObject<BlockEntityType<ExportBusEntity>> EXPORT_BUS_BLOCK_ENTITY = registerBlockEntity("export_bus_block_entity", ExportBusEntity::new, ModBlocks.EXPORT_BUS_BLOCK);
     public static final RegistryObject<BlockEntityType<StorageBusEntity>>STORAGE_BUS_BLOCK_ENTITY = registerBlockEntity("storage_bus_block_entity", StorageBusEntity::new, ModBlocks.STORAGE_BUS_BLOCK);
+    public static final RegistryObject<BlockEntityType<StorageTerminalEntity>>STORAGE_TERMINAL_BLOCK_ENTITY = registerBlockEntity("storage_terminal_block_entity", StorageTerminalEntity::new, ModBlocks.STORAGE_TERMINAL_BLOCK);
 
 
     public static void registerAll(IEventBus eventBus) {

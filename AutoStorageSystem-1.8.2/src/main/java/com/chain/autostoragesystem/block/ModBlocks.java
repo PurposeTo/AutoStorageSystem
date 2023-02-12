@@ -6,6 +6,7 @@ import com.chain.autostoragesystem.block.custom.ImportBusBlock;
 import com.chain.autostoragesystem.block.custom.base.BlockWithEntity;
 import com.chain.autostoragesystem.entity.custom.LinkCableEntity;
 import com.chain.autostoragesystem.entity.custom.StorageBusEntity;
+import com.chain.autostoragesystem.entity.custom.StorageTerminalEntity;
 import com.chain.autostoragesystem.item.ModItems;
 import com.chain.autostoragesystem.itemGroup.ModCreativeModeTab;
 import net.minecraft.world.item.BlockItem;
@@ -32,6 +33,7 @@ public class ModBlocks {
     public static final RegistryObject<Block> IMPORT_BUS_BLOCK = blockWithItem("import_bus_block", () -> new ImportBusBlock(getBlockProp()));
     public static final RegistryObject<Block> EXPORT_BUS_BLOCK = blockWithItem("export_bus_block", () -> new ExportBusBlock(getBlockProp()));
     public static final RegistryObject<Block> STORAGE_BUS_BLOCK = blockWithItem("storage_bus_block", () -> new BlockWithEntity(getBlockProp(), StorageBusEntity::new));
+    public static final RegistryObject<Block> STORAGE_TERMINAL_BLOCK = blockWithItem("storage_terminal_block", () -> new BlockWithEntity(getBlockProp(), StorageTerminalEntity::new));
 
 
     public static void registerAll(IEventBus eventBus) {

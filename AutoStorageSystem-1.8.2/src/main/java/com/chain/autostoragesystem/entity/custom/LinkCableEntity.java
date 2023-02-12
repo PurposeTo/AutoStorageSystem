@@ -4,6 +4,7 @@ import com.chain.autostoragesystem.ModCapabilities;
 import com.chain.autostoragesystem.api.connection.Connection;
 import com.chain.autostoragesystem.api.connection.IConnection;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
+import com.chain.autostoragesystem.entity.custom.base.BaseBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;

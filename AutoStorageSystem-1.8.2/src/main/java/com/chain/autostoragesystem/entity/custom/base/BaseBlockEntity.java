@@ -1,4 +1,4 @@
-package com.chain.autostoragesystem.entity.custom;
+package com.chain.autostoragesystem.entity.custom.base;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

@@ -7,6 +7,7 @@ import com.chain.autostoragesystem.api.connection.Connection;
 import com.chain.autostoragesystem.api.wrappers.ItemHandlerGroup;
 import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
+import com.chain.autostoragesystem.entity.custom.base.BaseBlockEntity;
 import com.chain.autostoragesystem.screen.custom.ExportBusMenu;
 import com.chain.autostoragesystem.utils.minecraft.TickerUtil;
 import net.minecraft.core.BlockPos;
@@ -66,7 +67,7 @@ public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.Ticka
     public void tickServer() {
         List<IItemHandlerWrapper> storageInventories = connection.getStorageBusses()
                 .stream()
-                .flatMap(storageBus -> storageBus.getNeighboursItemHandlers().stream())
+                .flatMap(storageBus -> storageBus.getStorageItemHandlers().stream())
                 .toList();
         itemsTransmitter.resetItemHandlers(storageInventories);
 
