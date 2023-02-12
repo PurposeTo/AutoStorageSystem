@@ -13,7 +13,7 @@ import java.util.List;
 public class EmptyItemsTransmitter implements IItemsTransmitter {
     @NotNull
     @Override
-    public List<StackInSlot> getStacks() {
+    public List<IStackInSlot> getStacks() {
         return new ArrayList<>();
     }
 
@@ -31,7 +31,7 @@ public class EmptyItemsTransmitter implements IItemsTransmitter {
 
     @Override
     public ItemStack moveItemStack(StackInSlot toMove, int toMoveCount, IItemsReceiver itemsReceiver) {
-        return toMove.resolve();
+        return toMove.unwrap();
     }
 
     @NotNull

@@ -23,26 +23,29 @@ public class ItemHandlerWrapper implements IItemHandlerWrapper {
         this.itemHandler = itemHandler;
     }
 
+    @NotNull
     @Override
-    public @NotNull List<StackInSlot> getStacks() {
+    public List<IStackInSlot> getStacks() {
         int slots = this.getSlots();
-        List<StackInSlot> result = new ArrayList<>();
+        List<IStackInSlot> result = new ArrayList<>();
         for (int slot = 0; slot < slots; slot++) {
-            StackInSlot inventoryStack = new StackInSlot(this, slot);
-            result.add(inventoryStack);
+            StackInSlot stack = new StackInSlot(itemHandler, slot);
+            result.add(stack);
         }
         return result;
     }
 
+    @NotNull
     @Override
-    public @NotNull List<IStackInSlot> getNotEmptyStacks() {
+    public List<IStackInSlot> getNotEmptyStacks() {
         return getStacks().stream()
                 .filter(IStackInSlot::notEmpty)
                 .collect(Collectors.toList());
     }
 
+    @NotNull
     @Override
-    public @NotNull List<IStackInSlot> getEmptyStacks() {
+    public List<IStackInSlot> getEmptyStacks() {
         return getStacks().stream()
                 .filter(IStackInSlot::isEmpty)
                 .collect(Collectors.toList());
@@ -50,18 +53,10 @@ public class ItemHandlerWrapper implements IItemHandlerWrapper {
 
     @Override
     public ItemStack moveItemStack(final StackInSlot toMove, final int toMoveCount, final IItemsReceiver itemsReceiver) {
-        ItemStack toMoveStack = toMove.extractItemStack(toMoveCount, false);
-        ItemStack remainingStack = itemsReceiver.insertItem(toMoveStack, false);
-
-        if (!remainingStack.isEmpty()) {
-            toMove.insertItem(remainingStack, false);
-        }
-
-        return remainingStack;
+        return toMove.moveItemStack(toMoveCount, itemsReceiver);
     }
 
     /**
-     * @param itemStack
      * @return Returns:
      * The remaining ItemStack that was not inserted
      * (if the entire stack is accepted, then return an empty ItemStack).
@@ -126,9 +121,11 @@ public class ItemHandlerWrapper implements IItemHandlerWrapper {
     //todo а если понадобиться сравнивать с другими реализациями этого интерфейса?
     @Override
     public boolean same(@NotNull IItemHandlerWrapper itemHandler) {
-        if (itemHandler instanceof ItemHandlerWrapper wrapper) {
-            return this.itemHandler == wrapper.getItemHandler();
-        }
-        return false;
+        return this.itemHandler == itemHandler.unwrap();
+    }
+
+    @Override
+    public IItemHandler unwrap() {
+        return itemHandler;
     }
 }

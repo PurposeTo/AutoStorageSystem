@@ -22,7 +22,7 @@ public interface IStackInSlot {
     int getSlot();
 
     @NotNull
-    ItemStack resolve();
+    ItemStack unwrap();
 
     /**
      * see {@link IItemHandler#extractItem(int, int, boolean)}

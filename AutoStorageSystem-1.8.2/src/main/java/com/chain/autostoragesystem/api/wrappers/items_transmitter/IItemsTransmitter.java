@@ -29,7 +29,7 @@ public interface IItemsTransmitter extends IItemHandlerComparer {
     }
 
     @Nonnull
-    List<StackInSlot> getStacks();
+    List<IStackInSlot> getStacks();
 
     @Nonnull
     List<IStackInSlot> getNotEmptyStacks();

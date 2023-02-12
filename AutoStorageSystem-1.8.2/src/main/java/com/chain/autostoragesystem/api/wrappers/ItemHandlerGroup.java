@@ -2,6 +2,7 @@ package com.chain.autostoragesystem.api.wrappers;
 
 import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
+import com.chain.autostoragesystem.api.wrappers.items_transmitter.IItemsTransmitter;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.IStackInSlot;
 import com.chain.autostoragesystem.api.wrappers.stack_in_slot.StackInSlot;
 import net.minecraft.world.item.ItemStack;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class ItemHandlerGroup implements IItemHandlerWrapper {
+public class ItemHandlerGroup implements IItemsReceiver, IItemsTransmitter {
     private final List<IItemHandlerWrapper> list;
 
     public ItemHandlerGroup() {
@@ -43,7 +44,7 @@ public class ItemHandlerGroup implements IItemHandlerWrapper {
 
     @NotNull
     @Override
-    public List<StackInSlot> getStacks() {
+    public List<IStackInSlot> getStacks() {
         return list.stream()
                 .flatMap(it -> it.getStacks().stream())
                 .toList();

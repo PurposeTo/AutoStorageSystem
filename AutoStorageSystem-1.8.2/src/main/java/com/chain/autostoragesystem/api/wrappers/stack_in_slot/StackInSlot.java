@@ -1,6 +1,5 @@
 package com.chain.autostoragesystem.api.wrappers.stack_in_slot;
 
-import com.chain.autostoragesystem.api.wrappers.item_handler.ItemHandlerWrapper;
 import com.chain.autostoragesystem.api.wrappers.items_receiver.IItemsReceiver;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -14,27 +13,27 @@ import javax.annotation.Nonnull;
  * Описывает весь стак предметов, лежащих в инвентаре.
  */
 public class StackInSlot implements IStackInSlot {
-    private final ItemHandlerWrapper itemHandler;
+    private final IItemHandler itemHandler;
     private final int slot;
 
-    public StackInSlot(@Nonnull ItemHandlerWrapper itemHandler, int slot) {
+    public StackInSlot(@Nonnull IItemHandler itemHandler, int slot) {
         this.itemHandler = itemHandler;
         this.slot = slot;
     }
 
     @Override
     public boolean isEmpty() {
-        return resolve().isEmpty();
+        return unwrap().isEmpty();
     }
 
     @Override
     public int getCount() {
-        return resolve().getCount();
+        return unwrap().getCount();
     }
 
     @Override
     public @NotNull Item getItem() {
-        return resolve().getItem();
+        return unwrap().getItem();
     }
 
     @Override
@@ -46,7 +45,7 @@ public class StackInSlot implements IStackInSlot {
      * see {@link IItemHandler#getStackInSlot(int)}
      **/
     @Override
-    public @NotNull ItemStack resolve() {
+    public @NotNull ItemStack unwrap() {
         return this.itemHandler.getStackInSlot(slot);
     }
 
@@ -86,6 +85,13 @@ public class StackInSlot implements IStackInSlot {
 
     @Override
     public @NotNull ItemStack moveItemStack(final int toMoveCount, final IItemsReceiver itemsReceiver) {
-        return this.itemHandler.moveItemStack(this, toMoveCount, itemsReceiver);
+        ItemStack toMoveStack = this.extractItemStack(toMoveCount, false);
+        ItemStack remainingStack = itemsReceiver.insertItem(toMoveStack, false);
+
+        if (!remainingStack.isEmpty()) {
+            this.insertItem(remainingStack, false);
+        }
+
+        return remainingStack;
     }
 }
