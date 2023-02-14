@@ -1,7 +1,8 @@
 package com.chain.autostoragesystem.screen;
 
 import com.chain.autostoragesystem.ModMain;
-import com.chain.autostoragesystem.screen.custom.ExportBusMenu;
+import com.chain.autostoragesystem.screen.custom.export_bus.ExportBusMenu;
+import com.chain.autostoragesystem.screen.custom.storage_terminal.StorageTerminalMenu;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;
@@ -16,6 +17,8 @@ public class ModMenuTypes {
 
     public static final RegistryObject<MenuType<ExportBusMenu>> EXPORT_BUS_MENU =
             registerMenuType("export_bus_menu", ExportBusMenu::new);
+    public static final RegistryObject<MenuType<StorageTerminalMenu>> STORAGE_TERMINAL_MENU =
+            registerMenuType("storage_terminal_menu", StorageTerminalMenu::new);
 
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(

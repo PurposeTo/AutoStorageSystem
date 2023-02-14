@@ -4,7 +4,7 @@ import com.chain.autostoragesystem.block.ModBlocks;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.item.ModItems;
 import com.chain.autostoragesystem.screen.ModMenuTypes;
-import com.chain.autostoragesystem.screen.custom.ExportBusScreen;
+import com.chain.autostoragesystem.screen.custom.export_bus.ExportBusScreen;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.level.block.Block;

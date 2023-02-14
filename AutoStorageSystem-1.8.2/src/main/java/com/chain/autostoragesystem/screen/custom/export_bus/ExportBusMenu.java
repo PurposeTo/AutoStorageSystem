@@ -1,4 +1,4 @@
-package com.chain.autostoragesystem.screen.custom;
+package com.chain.autostoragesystem.screen.custom.export_bus;
 
 import com.chain.autostoragesystem.ModCapabilities;
 import com.chain.autostoragesystem.block.ModBlocks;
@@ -8,6 +8,7 @@ import com.chain.autostoragesystem.screen.ModMenuTypes;
 import com.chain.autostoragesystem.screen.custom.slot.PhantomSlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
@@ -26,6 +27,12 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
     @Nonnull
     private final Container filters;
 
+    @NotNull
+    private final Container displayedContainer = new SimpleContainer(3 * 9);
+
+    private final int slotsInLine = 9;
+    private final int displayedLines = 3;
+
     public ExportBusMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         this(pContainerId, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()));
     }
@@ -33,10 +40,13 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
     public ExportBusMenu(int pContainerId, Inventory inv, BlockEntity entity) {
         super(ModMenuTypes.EXPORT_BUS_MENU.get(), pContainerId, inv, entity);
 
-        this.filters = entity.getCapability(ModCapabilities.CONTAINER).orElseThrow((IllegalArgumentException::new));
-        filters.startOpen(inv.player);
+        Container container = entity.getCapability(ModCapabilities.CONTAINER).orElseThrow((IllegalArgumentException::new));
 
-        addSlots(filters, 9, 3, 8, 18, PhantomSlot::new);
+        this.filters = container;
+
+        displayedContainer.startOpen(inv.player);
+
+        addSlots(displayedContainer, 9, 3, 8, 18, PhantomSlot::new);
     }
 
     @Override
@@ -46,7 +56,7 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
 
     @Override
     protected int getTeInvSlotCount() {
-        return filters.getContainerSize();
+        return displayedContainer.getContainerSize();
     }
 
     /**
@@ -81,7 +91,7 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
     @Override
     public void removed(Player playerIn) {
         super.removed(playerIn);
-        this.filters.stopOpen(playerIn);
+        this.displayedContainer.stopOpen(playerIn);
     }
 
     @Override
@@ -94,5 +104,46 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
             return;
         }
         super.clicked(slotId, dragType, click, player);
+    }
+
+    /**
+     * Updates the gui slot's ItemStacks based on scroll position.
+     */
+    public void scrollTo(float pPos) {
+        int slotsNeedDisplayCount = filters.getContainerSize(); // сколько всего слотов может отобразить
+
+        int i = (slotsNeedDisplayCount + 9 - 1) / 9 - displayedLines;
+        int j = (int) ((double) (pPos * (float) i) + 0.5D);
+        if (j < 0) {
+            j = 0;
+        }
+
+        for (int k = 0; k < displayedLines; ++k) {
+            for (int l = 0; l < 9; ++l) {
+                int i1 = l + (k + j) * 9;
+
+                int slotIndex = l + k * 9;
+                if (i1 >= 0 && i1 < slotsNeedDisplayCount) {
+                    ItemStack stackToDisplay = filters.getItem(i1);
+                    displayedContainer.setItem(slotIndex, stackToDisplay);
+                } else {
+                    displayedContainer.setItem(slotIndex, ItemStack.EMPTY);
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Можно скролить, если не все предметы отображаются
+     */
+    public boolean canScroll() {
+        return this.filters.getContainerSize() > displayedContainer.getContainerSize();
+    }
+
+    //todo что это за число?
+    public int getFoo() {
+        int slotsCount = filters.getContainerSize(); // сколько всего слотов
+        return (slotsCount + 9 - 1) / 9 - displayedLines;
     }
 }

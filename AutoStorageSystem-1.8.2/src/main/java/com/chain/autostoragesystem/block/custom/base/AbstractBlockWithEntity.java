@@ -36,7 +36,9 @@ public abstract class AbstractBlockWithEntity extends BaseEntityBlock {
     }
 
     protected InteractionResult openMenu(@NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
-        if (!level.isClientSide()) {
+        boolean clientSide = level.isClientSide();
+
+        if (!clientSide) {
             BlockEntity entity = level.getBlockEntity(pos);
             if (entity == null) {
                 throw new IllegalStateException("Block entity is missing!");
@@ -50,6 +52,6 @@ public abstract class AbstractBlockWithEntity extends BaseEntityBlock {
             }
         }
 
-        return InteractionResult.sidedSuccess(level.isClientSide());
+        return InteractionResult.sidedSuccess(clientSide);
     }
 }

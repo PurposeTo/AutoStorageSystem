@@ -8,7 +8,7 @@ import com.chain.autostoragesystem.api.wrappers.ItemHandlerGroup;
 import com.chain.autostoragesystem.api.wrappers.item_handler.IItemHandlerWrapper;
 import com.chain.autostoragesystem.entity.ModBlockEntities;
 import com.chain.autostoragesystem.entity.custom.base.BaseBlockEntity;
-import com.chain.autostoragesystem.screen.custom.ExportBusMenu;
+import com.chain.autostoragesystem.screen.custom.export_bus.ExportBusMenu;
 import com.chain.autostoragesystem.utils.minecraft.TickerUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -27,7 +27,7 @@ import java.util.List;
 
 public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.TickableServer, MenuProvider {
     private final Connection connection = new Connection(this);
-    private final SimpleContainer filters = new SimpleContainer(27);
+    private final SimpleContainer filters = new SimpleContainer(5 * 9);
 
     private final ExportBus exportBus;
 
@@ -85,7 +85,7 @@ public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.Ticka
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
+    public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory, @NotNull Player pPlayer) {
         return new ExportBusMenu(pContainerId, pInventory, this);
     }
 }

@@ -17,7 +17,8 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerMenu {
     protected final T blockEntity;
-    private final Level level;
+    protected final Level level;
+    protected final Inventory playerInv;
 
     public BaseMenu(MenuType<?> menuType, int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         this(menuType, pContainerId, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()));
@@ -28,6 +29,7 @@ public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerM
 
         this.blockEntity = (T) blockEntity;
         this.level = inv.player.level;
+        this.playerInv = inv;
 
         addPlayerSlots(inv);
     }
