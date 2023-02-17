@@ -1,6 +1,6 @@
 package com.chain.autostoragesystem.screen;
 
-import com.chain.autostoragesystem.screen.custom.slot.PhantomSlot;
+import com.chain.autostoragesystem.screen.slot.PhantomSlot;
 import com.chain.autostoragesystem.utils.minecraft.MenuSlotsUtils;
 import com.chain.autostoragesystem.utils.minecraft.SlotSupplier;
 import net.minecraft.network.FriendlyByteBuf;

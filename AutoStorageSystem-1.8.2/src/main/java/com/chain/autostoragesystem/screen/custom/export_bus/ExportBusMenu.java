@@ -5,7 +5,7 @@ import com.chain.autostoragesystem.entity.custom.ExportBusEntity;
 import com.chain.autostoragesystem.screen.BaseMenu;
 import com.chain.autostoragesystem.screen.ModMenuTypes;
 import com.chain.autostoragesystem.screen.custom.ScrollableMenu;
-import com.chain.autostoragesystem.screen.custom.slot.PhantomSlot;
+import com.chain.autostoragesystem.screen.slot.PhantomSlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;

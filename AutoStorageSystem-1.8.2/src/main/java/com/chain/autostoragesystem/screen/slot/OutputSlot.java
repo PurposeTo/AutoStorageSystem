@@ -1,4 +1,4 @@
-package com.chain.autostoragesystem.screen.custom.slot;
+package com.chain.autostoragesystem.screen.slot;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;

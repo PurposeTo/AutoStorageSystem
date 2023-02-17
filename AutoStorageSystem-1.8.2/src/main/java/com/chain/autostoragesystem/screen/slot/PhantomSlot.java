@@ -1,4 +1,4 @@
-package com.chain.autostoragesystem.screen.custom.slot;
+package com.chain.autostoragesystem.screen.slot;
 
 import com.chain.autostoragesystem.api.wrappers.slot.SlotWithEvent;
 import net.minecraft.world.Container;
