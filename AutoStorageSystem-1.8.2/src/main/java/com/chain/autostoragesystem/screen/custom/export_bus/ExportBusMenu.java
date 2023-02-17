@@ -38,7 +38,7 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
 
         this.handler = entity.getCapability(ModCapabilities.CONTAINER).orElseThrow((IllegalArgumentException::new));
 
-        this.scrollableMenu = new ScrollableMenu(displayedLines, handler);
+        this.scrollableMenu = new ScrollableMenu(displayedLines, slotsInLine, handler);
         this.scrollableMenu.open(inv.player);
 
         addSlots(scrollableMenu.createMenuSlots(8, 18, PhantomSlot::new));

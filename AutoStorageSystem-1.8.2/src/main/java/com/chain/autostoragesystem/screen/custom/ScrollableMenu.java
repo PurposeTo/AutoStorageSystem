@@ -16,18 +16,15 @@ import java.util.List;
 
 public class ScrollableMenu {
 
-    private final int slotsInLine = 9;
+    private final int slotsInLine;
     private final int lines;
     @NotNull
     private final SimpleContainer display;
+    private List<? extends SlotWithEvent> slots;
 
     @NotNull
     private final SimpleContainer handler;
-
     private int hiddenSlots = 0; // индекс первого отображаемого слота
-
-    private List<? extends SlotWithEvent> slots;
-
     private final ContainerListener handlerListener = new ContainerListener() {
 
         /**
@@ -51,8 +48,9 @@ public class ScrollableMenu {
         }
     };
 
-    public ScrollableMenu(int lines, @NotNull SimpleContainer handler) {
+    public ScrollableMenu(int lines, int slotsInLine, @NotNull SimpleContainer handler) {
         this.lines = lines;
+        this.slotsInLine = slotsInLine;
         this.display = new SimpleContainer(lines * slotsInLine);
         this.handler = handler;
 
