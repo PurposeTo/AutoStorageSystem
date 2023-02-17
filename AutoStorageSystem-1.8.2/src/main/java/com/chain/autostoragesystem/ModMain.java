@@ -6,6 +6,7 @@ import com.chain.autostoragesystem.item.ModItems;
 import com.chain.autostoragesystem.network.ModMessages;
 import com.chain.autostoragesystem.screen.ModMenuTypes;
 import com.chain.autostoragesystem.screen.custom.export_bus.ExportBusScreen;
+import com.chain.autostoragesystem.screen.custom.storage_terminal.StorageTerminalScreen;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.level.block.Block;
@@ -58,6 +59,7 @@ public class ModMain {
 
     private void clientSetup(final FMLClientSetupEvent event) {
         MenuScreens.register(ModMenuTypes.EXPORT_BUS_MENU.get(), ExportBusScreen::new);
+        MenuScreens.register(ModMenuTypes.STORAGE_TERMINAL_MENU.get(), StorageTerminalScreen::new);
     }
 
     private void setup(final FMLCommonSetupEvent event) {

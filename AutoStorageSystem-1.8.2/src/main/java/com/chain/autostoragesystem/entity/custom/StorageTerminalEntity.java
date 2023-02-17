@@ -27,7 +27,7 @@ public class StorageTerminalEntity extends BaseBlockEntity implements MenuProvid
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pContainerId, Inventory pInventory, Player pPlayer) {
+    public AbstractContainerMenu createMenu(int pContainerId, @NotNull Inventory pInventory, @NotNull Player pPlayer) {
         return new StorageTerminalMenu(pContainerId, pInventory, this);
     }
 }

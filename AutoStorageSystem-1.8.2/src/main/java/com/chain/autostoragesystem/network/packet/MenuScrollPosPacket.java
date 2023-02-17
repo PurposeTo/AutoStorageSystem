@@ -1,6 +1,6 @@
 package com.chain.autostoragesystem.network.packet;
 
-import com.chain.autostoragesystem.screen.custom.export_bus.ExportBusMenu;
+import com.chain.autostoragesystem.screen.custom.IScrollableMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkDirection;
@@ -33,8 +33,8 @@ public class MenuScrollPosPacket {
             if(context.getDirection() == NetworkDirection.PLAY_TO_SERVER){
                 // HERE WE ARE ON THE SERVER!
                 ServerPlayer sender = context.getSender();
-                if (sender.containerMenu instanceof ExportBusMenu exportBusMenu) {
-                    exportBusMenu.scrollTo(scrollPos);
+                if (sender.containerMenu instanceof IScrollableMenu scrollableMenu) {
+                    scrollableMenu.scrollTo(scrollPos);
                     success.set(true);
                 }
             }

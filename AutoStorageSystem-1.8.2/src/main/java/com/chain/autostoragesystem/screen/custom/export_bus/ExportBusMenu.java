@@ -4,6 +4,7 @@ import com.chain.autostoragesystem.ModCapabilities;
 import com.chain.autostoragesystem.entity.custom.ExportBusEntity;
 import com.chain.autostoragesystem.screen.BaseMenu;
 import com.chain.autostoragesystem.screen.ModMenuTypes;
+import com.chain.autostoragesystem.screen.custom.IScrollableMenu;
 import com.chain.autostoragesystem.screen.custom.ScrollableMenu;
 import com.chain.autostoragesystem.screen.slot.PhantomSlot;
 import net.minecraft.network.FriendlyByteBuf;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.Set;
 
-public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
+public class ExportBusMenu extends BaseMenu<ExportBusEntity> implements IScrollableMenu {
 
     private static final int slotsInLine = 9;
     private static final int displayedLines = 3;

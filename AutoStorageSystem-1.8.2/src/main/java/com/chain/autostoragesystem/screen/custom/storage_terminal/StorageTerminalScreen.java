@@ -1,4 +1,4 @@
-package com.chain.autostoragesystem.screen.custom.export_bus;
+package com.chain.autostoragesystem.screen.custom.storage_terminal;
 
 import com.chain.autostoragesystem.ModMain;
 import com.chain.autostoragesystem.api.Side;
@@ -14,9 +14,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-public class ExportBusScreen extends AbstractContainerScreen<ExportBusMenu> {
+public class StorageTerminalScreen extends AbstractContainerScreen<StorageTerminalMenu> {
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(ModMain.MOD_ID, "textures/gui/bus.png");
+            new ResourceLocation(ModMain.MOD_ID, "textures/gui/storage_terminal.png");
 
     private final Side side;
 
@@ -29,10 +29,10 @@ public class ExportBusScreen extends AbstractContainerScreen<ExportBusMenu> {
      */
     private boolean scrolling;
 
-    public ExportBusScreen(ExportBusMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
+    public StorageTerminalScreen(StorageTerminalMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
-        this.imageWidth = 195;
-        this.imageHeight = 168;
+        this.imageWidth = 194;
+        this.imageHeight = 202;
 
         side = Side.get(pPlayerInventory.player.getLevel());
     }
