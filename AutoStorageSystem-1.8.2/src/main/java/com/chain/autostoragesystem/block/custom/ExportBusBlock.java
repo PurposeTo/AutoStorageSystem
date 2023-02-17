@@ -10,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -24,13 +25,18 @@ public class ExportBusBlock extends AbstractBlockWithEntity {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos pPos, @NotNull BlockState pState) {
         return new ExportBusEntity(pPos, pState);
     }
 
+    @NotNull
     @Override
-    public InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos,
-                                 Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+    public InteractionResult use(@NotNull BlockState pState,
+                                 @NotNull Level pLevel,
+                                 @NotNull BlockPos pPos,
+                                 @NotNull Player pPlayer,
+                                 @NotNull InteractionHand pHand,
+                                 @NotNull BlockHitResult pHit) {
         return openMenu(pLevel, pPos, pPlayer);
     }
 }

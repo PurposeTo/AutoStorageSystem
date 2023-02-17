@@ -38,14 +38,13 @@ public abstract class AbstractBlockWithEntity extends BaseEntityBlock {
     protected InteractionResult openMenu(@NotNull Level level, @NotNull BlockPos pos, @NotNull Player player) {
         boolean clientSide = level.isClientSide();
 
-        if (!clientSide) {
+        if (!clientSide && player instanceof ServerPlayer serverPlayer) {
             BlockEntity entity = level.getBlockEntity(pos);
             if (entity == null) {
                 throw new IllegalStateException("Block entity is missing!");
             }
 
             if (entity instanceof MenuProvider menuProvider) {
-                ServerPlayer serverPlayer = (ServerPlayer) player;
                 NetworkHooks.openGui(serverPlayer, menuProvider, pos);
             } else {
                 throw new IllegalStateException("Menu provider is missing!");

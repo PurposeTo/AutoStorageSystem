@@ -5,9 +5,9 @@ import com.chain.autostoragesystem.block.ModBlocks;
 import com.chain.autostoragesystem.entity.custom.ExportBusEntity;
 import com.chain.autostoragesystem.screen.BaseMenu;
 import com.chain.autostoragesystem.screen.ModMenuTypes;
+import com.chain.autostoragesystem.screen.custom.ScrollableMenu;
 import com.chain.autostoragesystem.screen.custom.slot.PhantomSlot;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -24,14 +24,13 @@ import java.util.Set;
 
 public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
 
+    private static final int slotsInLine = 9;
+    private static final int displayedLines = 3;
+
     @Nonnull
-    private final Container filters;
+    private final SimpleContainer handler;
 
-    @NotNull
-    private final Container displayedContainer = new SimpleContainer(3 * 9);
-
-    private final int slotsInLine = 9;
-    private final int displayedLines = 3;
+    private final ScrollableMenu scrollableMenu;
 
     public ExportBusMenu(int pContainerId, Inventory inv, FriendlyByteBuf extraData) {
         this(pContainerId, inv, inv.player.level.getBlockEntity(extraData.readBlockPos()));
@@ -40,13 +39,12 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
     public ExportBusMenu(int pContainerId, Inventory inv, BlockEntity entity) {
         super(ModMenuTypes.EXPORT_BUS_MENU.get(), pContainerId, inv, entity);
 
-        Container container = entity.getCapability(ModCapabilities.CONTAINER).orElseThrow((IllegalArgumentException::new));
+        this.handler = entity.getCapability(ModCapabilities.CONTAINER).orElseThrow((IllegalArgumentException::new));
 
-        this.filters = container;
+        this.scrollableMenu = new ScrollableMenu(displayedLines, handler);
+        this.scrollableMenu.open(inv.player);
 
-        displayedContainer.startOpen(inv.player);
-
-        addSlots(displayedContainer, 9, 3, 8, 18, PhantomSlot::new);
+        addSlots(scrollableMenu.createMenuSlots(8, 18, PhantomSlot::new));
     }
 
     @Override
@@ -56,7 +54,7 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
 
     @Override
     protected int getTeInvSlotCount() {
-        return displayedContainer.getContainerSize();
+        return scrollableMenu.getDisplaySize();
     }
 
     /**
@@ -77,7 +75,7 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
         if (index < TE_INVENTORY_FIRST_SLOT_INDEX) {
 
             // If TE inventory has not this item
-            if (!filters.hasAnyOf(Set.of(itemType))) {
+            if (!handler.hasAnyOf(Set.of(itemType))) {
                 moveItemStackTo(toMove, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX + getTeInvSlotCount(), false);
             }
         }
@@ -89,13 +87,13 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
      * Called when the container is closed.
      */
     @Override
-    public void removed(Player playerIn) {
+    public void removed(@NotNull Player playerIn) {
+        this.scrollableMenu.onRemoved(playerIn);
         super.removed(playerIn);
-        this.displayedContainer.stopOpen(playerIn);
     }
 
     @Override
-    public void clicked(int slotId, int dragType, ClickType click, Player player) {
+    public void clicked(int slotId, int dragType, @NotNull ClickType click, @NotNull Player player) {
         Slot slot = slotId > -1 && slotId < slots.size() ? slots.get(slotId) : null;
         if (slot instanceof PhantomSlot) {
             ItemStack s = getCarried().copy();
@@ -106,44 +104,15 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
         super.clicked(slotId, dragType, click, player);
     }
 
-    /**
-     * Updates the gui slot's ItemStacks based on scroll position.
-     */
-    public void scrollTo(float pPos) {
-        int slotsNeedDisplayCount = filters.getContainerSize(); // сколько всего слотов может отобразить
-
-        int i = (slotsNeedDisplayCount + 9 - 1) / 9 - displayedLines;
-        int j = (int) ((double) (pPos * (float) i) + 0.5D);
-        if (j < 0) {
-            j = 0;
-        }
-
-        for (int k = 0; k < displayedLines; ++k) {
-            for (int l = 0; l < 9; ++l) {
-                int i1 = l + (k + j) * 9;
-
-                int slotIndex = l + k * 9;
-                if (i1 >= 0 && i1 < slotsNeedDisplayCount) {
-                    ItemStack stackToDisplay = filters.getItem(i1);
-                    displayedContainer.setItem(slotIndex, stackToDisplay);
-                } else {
-                    displayedContainer.setItem(slotIndex, ItemStack.EMPTY);
-                }
-            }
-        }
-
+    public int getScrollIndex() {
+        return scrollableMenu.getScrollIndex();
     }
 
-    /**
-     * Можно скролить, если не все предметы отображаются
-     */
+    public void scrollTo(float scrollPos) {
+        scrollableMenu.scrollTo(scrollPos);
+    }
+
     public boolean canScroll() {
-        return this.filters.getContainerSize() > displayedContainer.getContainerSize();
-    }
-
-    //todo что это за число?
-    public int getFoo() {
-        int slotsCount = filters.getContainerSize(); // сколько всего слотов
-        return (slotsCount + 9 - 1) / 9 - displayedLines;
+        return scrollableMenu.canScroll();
     }
 }

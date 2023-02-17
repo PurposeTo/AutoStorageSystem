@@ -1,7 +1,7 @@
 package com.chain.autostoragesystem.network;
 
 import com.chain.autostoragesystem.ModMain;
-import com.chain.autostoragesystem.network.packet.ExamplePacket;
+import com.chain.autostoragesystem.network.packet.MenuScrollPosPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.chunk.LevelChunk;
@@ -27,10 +27,10 @@ public class ModMessages {
                 .serverAcceptedVersions(s -> true)
                 .simpleChannel();
 
-        INSTANCE.messageBuilder(ExamplePacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(ExamplePacket::new)
-                .encoder(ExamplePacket::toBytes)
-                .consumer(ExamplePacket::handle)
+        INSTANCE.messageBuilder(MenuScrollPosPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(MenuScrollPosPacket::new)
+                .encoder(MenuScrollPosPacket::toBytes)
+                .consumer(MenuScrollPosPacket::handle)
                 .add();
     }
 

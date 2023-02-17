@@ -1,12 +1,12 @@
 package com.chain.autostoragesystem.screen.custom.slot;
 
+import com.chain.autostoragesystem.api.wrappers.slot.SlotWithEvent;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class PhantomSlot extends Slot {
+public class PhantomSlot extends SlotWithEvent {
 
 	public PhantomSlot(Container inv, int slotIndex, int posX, int posY) {
 		super(inv, slotIndex, posX, posY);

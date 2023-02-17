@@ -1,6 +1,10 @@
 package com.chain.autostoragesystem.screen.custom.export_bus;
 
 import com.chain.autostoragesystem.ModMain;
+import com.chain.autostoragesystem.api.Side;
+import com.chain.autostoragesystem.network.ModMessages;
+import com.chain.autostoragesystem.network.packet.MenuScrollPosPacket;
+import com.chain.autostoragesystem.utils.common.Random;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -9,10 +13,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 public class ExportBusScreen extends AbstractContainerScreen<ExportBusMenu> {
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(ModMain.MOD_ID, "textures/gui/bus.png");
+
+    private final int id = Random.range(0, 9999);
+    private final Side side;
 
     /**
      * Amount scrolled in Creative mode inventory (0 = top, 1 = bottom)
@@ -25,15 +33,14 @@ public class ExportBusScreen extends AbstractContainerScreen<ExportBusMenu> {
 
     public ExportBusScreen(ExportBusMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
         super(pMenu, pPlayerInventory, pTitle);
-
         this.imageWidth = 195;
         this.imageHeight = 168;
 
-        this.menu.scrollTo(0.0F);
+        side = Side.get(pPlayerInventory.player.getLevel());
     }
 
     @Override
-    protected void renderBg(PoseStack pPoseStack, float pPartialTick, int pMouseX, int pMouseY) {
+    protected void renderBg(@NotNull PoseStack pPoseStack, float pPartialTick, int pMouseX, int pMouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
@@ -44,7 +51,7 @@ public class ExportBusScreen extends AbstractContainerScreen<ExportBusMenu> {
     }
 
     @Override
-    public void render(PoseStack pPoseStack, int mouseX, int mouseY, float delta) {
+    public void render(@NotNull PoseStack pPoseStack, int mouseX, int mouseY, float delta) {
         renderBackground(pPoseStack);
         super.render(pPoseStack, mouseX, mouseY, delta);
         renderTooltip(pPoseStack, mouseX, mouseY);
@@ -59,10 +66,20 @@ public class ExportBusScreen extends AbstractContainerScreen<ExportBusMenu> {
         if (!this.canScroll()) {
             return false;
         } else {
-            int i = this.menu.getFoo();
+            int i = this.menu.getScrollIndex();
             float f = (float) (pDelta / (double) i);
-            this.scrollOffs = Mth.clamp(this.scrollOffs - f, 0.0F, 1.0F);
+            float scrollOffs = Mth.clamp(this.scrollOffs - f, 0.0F, 1.0F);
+
+            if (scrollOffs == this.scrollOffs) {
+                return false;
+            }
+
+            this.scrollOffs = scrollOffs;
             this.menu.scrollTo(this.scrollOffs);
+
+            if (side == Side.CLIENT) {
+                ModMessages.sendToServer(new MenuScrollPosPacket(this.scrollOffs));
+            }
             return true;
         }
     }

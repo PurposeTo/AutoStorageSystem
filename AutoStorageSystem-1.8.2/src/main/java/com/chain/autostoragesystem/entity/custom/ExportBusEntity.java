@@ -37,7 +37,7 @@ public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.Ticka
     public ExportBusEntity(BlockPos pWorldPosition, BlockState pBlockState) {
         super(ModBlockEntities.EXPORT_BUS_BLOCK_ENTITY.get(), pWorldPosition, pBlockState);
 
-        exportBus = new ExportBus(itemsTransmitter, ItemTypeFiltersFactory.getFromContainer(filters));
+        this.exportBus = new ExportBus(itemsTransmitter, ItemTypeFiltersFactory.getFromContainer(filters));
         registerCapability(ModCapabilities.CONNECTION, () -> connection);
         registerCapability(ModCapabilities.CONTAINER, () -> filters);
         registerCapability(ModCapabilities.EXPORT_BUS, () -> exportBus);
@@ -58,9 +58,14 @@ public class ExportBusEntity extends BaseBlockEntity implements TickerUtil.Ticka
     }
 
     @Override
-    public void load(CompoundTag nbt) {
+    public void load(@NotNull CompoundTag nbt) {
         super.load(nbt);
         filters.fromTag(nbt.getList("filters", CompoundTag.TAG_COMPOUND));
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
     }
 
     @Override

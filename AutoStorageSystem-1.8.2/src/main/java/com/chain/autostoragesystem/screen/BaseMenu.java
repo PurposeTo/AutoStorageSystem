@@ -1,5 +1,6 @@
 package com.chain.autostoragesystem.screen;
 
+import com.chain.autostoragesystem.utils.minecraft.MenuSlotsUtils;
 import com.chain.autostoragesystem.utils.minecraft.SlotSupplier;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
@@ -14,6 +15,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerMenu {
     protected final T blockEntity;
@@ -88,7 +91,7 @@ public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerM
     }
 
     @Override
-    public boolean stillValid(Player pPlayer) {
+    public boolean stillValid(@NotNull Player pPlayer) {
         return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()), pPlayer, getRegistryBlock());
     }
 
@@ -112,6 +115,7 @@ public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerM
         addSlots(playerInventory, 9, 1, 8, 144, Slot::new);
     }
 
+
     protected <T extends Slot> void addSlots(Container container,
                                              int slotsInLine,
                                              int lines,
@@ -123,20 +127,12 @@ public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerM
                 .toList()
                 .size();
 
-        final int slotHeight = 16;
-        final int slotWidth = 16;
+        List<T> slots = MenuSlotsUtils.createWithPosition(container, firstSlotIndex, slotsInLine, lines, horizontalOffset, verticalOffset, slotSupplier);
+        addSlots(slots);
+    }
 
-        final int horizontalSpacing = 2;
-        final int verticalSpacing = 2;
-
-        for (int i = 0; i < lines; ++i) {
-            for (int l = 0; l < slotsInLine; ++l) {
-                int posX = horizontalOffset + (l * (slotWidth + horizontalSpacing));
-                int posY = verticalOffset + (i * (slotHeight + verticalSpacing));
-                int slotIndex = l + i * slotsInLine + firstSlotIndex;
-                T slot = slotSupplier.create(container, slotIndex, posX, posY);
-                this.addSlot(slot);
-            }
-        }
+    protected <T extends Slot> void addSlots(@NotNull List<T> slots) {
+        slots.forEach(this::addSlot);
     }
 }
+
