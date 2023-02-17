@@ -1,18 +1,15 @@
 package com.chain.autostoragesystem.screen;
 
+import com.chain.autostoragesystem.screen.custom.slot.PhantomSlot;
 import com.chain.autostoragesystem.utils.minecraft.MenuSlotsUtils;
 import com.chain.autostoragesystem.utils.minecraft.SlotSupplier;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.MenuType;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +34,23 @@ public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerM
         addPlayerSlots(inv);
     }
 
-    protected abstract Block getRegistryBlock();
+    @Override
+    public void clicked(int slotId, int dragType, @NotNull ClickType click, @NotNull Player player) {
+        Slot slot = slotId > -1 && slotId < slots.size() ?
+                slots.get(slotId)
+                : null;
+
+        if (slot instanceof PhantomSlot) {
+            ItemStack carriedCopy = getCarried().copy();
+            if (!carriedCopy.isEmpty()) {
+                carriedCopy.setCount(1);
+            }
+
+            slot.set(carriedCopy);
+            return;
+        }
+        super.clicked(slotId, dragType, click, player);
+    }
 
 
     // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
@@ -92,7 +105,7 @@ public abstract class BaseMenu<T extends BlockEntity> extends AbstractContainerM
 
     @Override
     public boolean stillValid(@NotNull Player pPlayer) {
-        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()), pPlayer, getRegistryBlock());
+        return stillValid(ContainerLevelAccess.create(level, blockEntity.getBlockPos()), pPlayer, blockEntity.getBlockState().getBlock());
     }
 
     protected void addPlayerSlots(Inventory playerInventory) {

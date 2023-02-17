@@ -1,7 +1,6 @@
 package com.chain.autostoragesystem.screen.custom.export_bus;
 
 import com.chain.autostoragesystem.ModCapabilities;
-import com.chain.autostoragesystem.block.ModBlocks;
 import com.chain.autostoragesystem.entity.custom.ExportBusEntity;
 import com.chain.autostoragesystem.screen.BaseMenu;
 import com.chain.autostoragesystem.screen.ModMenuTypes;
@@ -11,11 +10,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,11 +42,6 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
         this.scrollableMenu.open(inv.player);
 
         addSlots(scrollableMenu.createMenuSlots(8, 18, PhantomSlot::new));
-    }
-
-    @Override
-    protected Block getRegistryBlock() {
-        return ModBlocks.EXPORT_BUS_BLOCK.get();
     }
 
     @Override
@@ -90,18 +82,6 @@ public class ExportBusMenu extends BaseMenu<ExportBusEntity> {
     public void removed(@NotNull Player playerIn) {
         this.scrollableMenu.onRemoved(playerIn);
         super.removed(playerIn);
-    }
-
-    @Override
-    public void clicked(int slotId, int dragType, @NotNull ClickType click, @NotNull Player player) {
-        Slot slot = slotId > -1 && slotId < slots.size() ? slots.get(slotId) : null;
-        if (slot instanceof PhantomSlot) {
-            ItemStack s = getCarried().copy();
-            if (!s.isEmpty()) s.setCount(1);
-            slot.set(s);
-            return;
-        }
-        super.clicked(slotId, dragType, click, player);
     }
 
     public int getScrollIndex() {
